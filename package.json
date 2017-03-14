@@ -1,0 +1,11 @@
+{
+  "name": "sfschedule",
+  "version": "1.0.0",
+  "description": "schedule for superfit classes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kim Kern <mail@kimkern.de>",
+  "license": "ISC"
+}
