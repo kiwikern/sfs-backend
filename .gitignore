@@ -1,6 +1,9 @@
 # Config
 config.js
 
+# Datafile
+schedule.json
+
 # Logs
 logs
 *.log
