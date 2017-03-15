@@ -9,6 +9,7 @@
   "author": "Kim Kern <mail@kimkern.de>",
   "license": "ISC",
   "dependencies": {
+    "jquery": "^3.1.1",
     "node-fetch": "^1.6.3"
   }
 }

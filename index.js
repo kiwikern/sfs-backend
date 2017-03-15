@@ -1,57 +1,42 @@
 const jsdom = require("jsdom");
 const fetch = require("node-fetch");
 const config = require("./config.js");
+const jQuery = require('jquery');
 
 
 const studioPath = config.studios[0];
 const studioUrl = config.baseUrl + '/' + studioPath;
 const dayPath = config.days.tuesday;
-const dayUrl = studioUrl + '/' + dayPath;
-console.log(dayUrl);
+let dayUrl = studioUrl
+if (dayPath.length > 0) {
+  dayUrl = dayUrl + '/' + dayPath;
+}
 
-let fetchPromise = fetch(dayUrl)
-.then(res => res.text())
-.then(parse)
-.then(extractCourseInfos);
+getCourseInfosForOneDay(dayUrl);
+
+function getCourseInfosForOneDay(url) {
+  fetch(url)
+    .then(res => res.text())
+    .then(parse);
+}
 
 function parse(body) {
   return new Promise(resolve => {
     jsdom.env(
       body,
-      ["http://code.jquery.com/jquery-3.1.1.slim.min.js"],
       (err, window) => {
-        let column = window.$('#content table');
-        resolve(column);
+        let $ = jQuery(window);
+        let tables = $('#content table');
+        let courseInfos = $.map(tables, t => getCourseInfo($(t)));
+        console.dir(courseInfos)
+        resolve(courseInfos);
       });
     });
   };
 
-  function extractCourseInfos(courses) {
-    let courseInfos = [];
-    for (let course of courses) {
-      getCourseInfo(course)
-      .then(courseInfo => courseInfos.push(courseInfo))
-      .catch(err => console.log(err));
-    }
-    console.dir(courseInfos);
-  };
-
   function getCourseInfo(course) {
-    console.dir(course.Element);
-    return new Promise(resolve => {
-      jsdom.env(
-        course.rows,
-        ["http://code.jquery.com/jquery-3.1.1.slim.min.js"],
-        (err, window) => {
-          console.dir(err);
-          console.dir(window);
-          let courseInfo = {};
-          //courseInfo.time = window.$('.kpcelltime');
-          console.dir(window.$('.kpcelltime'));
-          //courseInfo.course = window.$('img').attr('src');
-          console.dir(window.$('img').attr('src'));
-          console.dir(courseInfo);
-          resolve(courseInfo);
-        });
-      });
-    };
+    let courseInfo = {};
+    courseInfo.time = course.find('.kpcelltime').first().text().slice(0, -4);
+    courseInfo.course = course.find('img').attr('src').slice(21, -4);
+    return courseInfo
+  };
