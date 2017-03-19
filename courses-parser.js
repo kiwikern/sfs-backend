@@ -5,7 +5,7 @@ const jQuery = require('jquery');
 const fs = require('fs');
 
 exports.parseCourses = () => {
-  const scheduleJSON = getCourseInfosForAllStudios()
+  return getCourseInfosForAllStudios()
     .then(json => persist(json));
 }
 
