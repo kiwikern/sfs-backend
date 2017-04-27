@@ -8,7 +8,7 @@ let schedule = {};
 scheduleReader.getJSON()
   .then(json => schedule = json);
 
-app.use(route.get('/', ctx => {
+app.use(route.get('/schedule', ctx => {
   ctx.body = schedule;
 }));
 
