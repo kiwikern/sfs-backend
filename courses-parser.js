@@ -3,14 +3,29 @@ const fetch = require("node-fetch");
 const config = require("./config.js");
 const jQuery = require('jquery');
 const fs = require('fs');
+const scheduleReader = require('./schedule-reader.js');
+const _ = require('lodash/core');
 
+/**
+* Returns true, if parsed schedule differs from previously
+* persisted schedule.
+*/
 exports.parseCourses = () => {
   return getCourseInfosForAllStudios()
     .then(json => persist(json));
 }
 
 function persist(scheduleJSON) {
-  fs.writeFile("./schedule.json", scheduleJSON, err => err ? console.log(err) : console.log('file saved'));
+  return scheduleReader.getJSON()
+    .then(json => {
+      fs.writeFile("./schedule.json", scheduleJSON, err => err ? console.log(err) : console.log('file saved'));
+      try {
+        return !_.isEqual(json, JSON.parse(scheduleJSON));
+      } catch(err) {
+        console.log('CoursesParser#persist: Comparing JSON failed \n' + err);
+        return false;
+      }
+    });
 }
 
 function getCourseInfosForAllStudios() {
@@ -19,12 +34,12 @@ function getCourseInfosForAllStudios() {
   for (let studio of config.studios) {
     const studioUrl = config.baseUrl + '/' + studio;
     let promise = getCourseInfoForAllDays(studioUrl)
-    .then(courses => schedule[studio] = courses)
-    .catch(error => console.log(error));
+      .then(courses => schedule[studio] = courses)
+      .catch(error => console.log(error));
     promises.push(promise);
   }
   return Promise.all(promises)
-  .then(() => JSON.stringify(schedule, null, 2));
+    .then(() => JSON.stringify(schedule, null, 2));
 }
 
 function getCourseInfoForAllDays(studioUrl) {
@@ -64,12 +79,12 @@ function parseWebsite(body) {
         let courseInfos = $.map(tables, t => getCourseInfo($(t)));
         resolve(courseInfos);
       });
-    });
-  };
+  });
+};
 
-  function getCourseInfo(course) {
-    let courseInfo = {};
-    courseInfo.time = course.find('.kpcelltime').first().text().slice(0, -4);
-    courseInfo.course = course.find('img').attr('src').slice(21, -4);
-    return courseInfo
-  };
+function getCourseInfo(course) {
+  let courseInfo = {};
+  courseInfo.time = course.find('.kpcelltime').first().text().slice(0, -4);
+  courseInfo.course = course.find('img').attr('src').slice(21, -4);
+  return courseInfo
+};

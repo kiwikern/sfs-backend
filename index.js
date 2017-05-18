@@ -16,9 +16,9 @@ app.use(route.get('/reload', reload));
 
 app.listen(3000);
 
-function reload(ctx) {
+function reload() {
   coursesParser.parseCourses()
+    .then(result => console.log('Wurde geändert:' + result))
     .then(scheduleReader.getJSON)
     .then(json => schedule = json);
-  ctx.body = 'Is refreshing.';
 }
