@@ -7,9 +7,9 @@ const scheduleReader = require('./schedule-reader.js');
 const _ = require('lodash/core');
 
 /**
-* Returns true, if parsed schedule differs from previously
-* persisted schedule.
-*/
+ * Returns true, if parsed schedule differs from previously
+ * persisted schedule.
+ */
 exports.parseCourses = () => {
   return getCourseInfosForAllStudios()
     .then(json => persist(json));
@@ -18,10 +18,19 @@ exports.parseCourses = () => {
 function persist(scheduleJSON) {
   return scheduleReader.getJSON()
     .then(json => {
-      fs.writeFile("./schedule.json", scheduleJSON, err => err ? console.log(err) : console.log('file saved'));
+      fs.writeFile("./schedule.json", scheduleJSON, err => {
+        if (err) {
+          console.log(new Date().toUTCString());
+          console.log('Writing to file failed.');
+          console.log(err);
+        } else {
+          console.log(new Date().toUTCString());
+          console.log('file saved');
+        }
+      });
       try {
         return !_.isEqual(json, JSON.parse(scheduleJSON));
-      } catch(err) {
+      } catch (err) {
         console.log('CoursesParser#persist: Comparing JSON failed \n' + err);
         return false;
       }
