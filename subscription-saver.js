@@ -1,8 +1,10 @@
+const databaseService = require('./database-service.js');
+
 exports.saveSubscription = (ctx) => {
   if (isValidSubscriptionRequest(ctx)) {
-    return saveSubscriptionToDatabase(ctx.body)
+    return databaseService.addSubscription(ctx.request.body)
       .then(() => sendSuccessMessage(ctx))
-      .catch(() => sendErrorMessage(ctx));
+      .catch((err) => sendErrorMessage(ctx));
   }
 }
 
@@ -20,17 +22,6 @@ function isValidSubscriptionRequest(ctx) {
   } else {
     return true;
   }
-}
-
-function saveSubscriptionToDatabase(subscription) {
-  return new Promise((resolve, reject) => {
-    if (false) {
-      reject();
-      return;
-    } else {
-      resolve();
-    }
-  });
 }
 
 function sendSuccessMessage(ctx) {

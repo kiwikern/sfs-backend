@@ -1,7 +1,8 @@
 const coursesParser = require('./courses-parser.js');
 const scheduleReader = require('./schedule-reader.js');
-const subscriptionSaver = require('./subscription-saver.js')
-const notificationSender = require('./push-notification-sender.js')
+const subscriptionSaver = require('./subscription-saver.js');
+const notificationSender = require('./push-notification-sender.js');
+const databaseService = require('./database-service.js');
 const cron = require('node-cron');
 const router = require('koa-router')();
 const koa = require('koa');
@@ -12,6 +13,7 @@ let schedule = {};
 scheduleReader.getJSON()
   .then(json => schedule = json);
 
+databaseService.init();
 
 app.use(bodyParser({fallback: true}));
 app.use(router.routes());
@@ -25,9 +27,7 @@ router.get('/reload', reload);
 notificationSender.init();
 router.get('/send', () => notificationSender.sendPush());
 
-router.post('/subscription', (ctx) => {
-  subscriptionSaver.saveSubscription(ctx);
-});
+router.post('/subscription', (ctx) => subscriptionSaver.saveSubscription(ctx));
 
 app.listen(3000);
 
