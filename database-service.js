@@ -1,6 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 const mongoSecrets = require('./secrets.js').mongo;
-const url = `mongodb://localhost:${mongoSecrets.port}/sfs`;
+const url = `mongodb://${mongoSecrets.user}:${mongoSecrets.password}@localhost:${mongoSecrets.port}/sfs`;
 let dbInstance = {};
 
 exports.init = () => {
