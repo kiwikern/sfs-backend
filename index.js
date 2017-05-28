@@ -25,7 +25,7 @@ router.get('/schedule', ctx => {
 router.get('/reload', reload);
 
 notificationSender.init();
-router.get('/send', () => notificationSender.sendPush());
+router.get('/send', notificationSender.sendPush);
 
 router.post('/subscription', (ctx) => subscriptionSaver.saveSubscription(ctx));
 
@@ -38,6 +38,7 @@ cron.schedule('0 4 * * *', reload);
 
 function reload() {
   coursesParser.parseCourses()
+    .then(hasChanged => hasChanged ? notificationSender.sendPush() : false)
     .then(scheduleReader.getJSON)
     .then(json => schedule = json);
 }
