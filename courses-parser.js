@@ -18,41 +18,47 @@ exports.parseCourses = () => {
 function persist(scheduleJSON) {
   return scheduleReader.getJSON()
     .then(json => {
-      fs.writeFile("./schedule.json", scheduleJSON, err => {
-        if (err) {
-          console.log(new Date().toUTCString());
-          console.log('Writing to file failed.');
-          console.log(err);
-        } else {
-          console.log(new Date().toUTCString());
-          console.log('file saved');
-        }
-      });
-      try {
-        return !_.isEqual(json, JSON.parse(scheduleJSON));
-      } catch (err) {
-        console.log('CoursesParser#persist: Comparing JSON failed \n' + err);
+      if (scheduleJSON && scheduleJSON.length > 0) {
+        saveToFile(scheduleJSON);
+        return !_.isEqual(json, scheduleJSON);
+      } else {
         return false;
       }
     });
 }
 
+function saveToFile(scheduleJSON) {
+  const newJSONString = JSON.stringify(scheduleJSON, null, 2);
+  fs.writeFile("./schedule.json", newJSONString, err => {
+    if (err) {
+      console.log('Writing to file failed.');
+      console.log(err);
+    } else {
+      console.log('file saved');
+    }
+  });
+}
+
 function getCourseInfosForAllStudios() {
-  let schedule = {};
+  let schedule = [];
   let promises = [];
   for (let studio of config.studios) {
     const studioUrl = config.baseUrl + '/' + studio;
     let promise = getCourseInfoForAllDays(studioUrl)
-      .then(courses => schedule[studio] = courses)
+      .then(courses => courses.map(c => {
+        c.studio = studio;
+        return c;
+      }))
+      .then(courses => schedule = schedule.concat(courses))
       .catch(error => console.log(error));
     promises.push(promise);
   }
   return Promise.all(promises)
-    .then(() => JSON.stringify(schedule, null, 2));
+    .then(() => schedule);
 }
 
 function getCourseInfoForAllDays(studioUrl) {
-  let result = {};
+  let result = [];
   let promises = [];
   for (let day in config.days) {
     let dayPath = config.days[day];
@@ -63,7 +69,11 @@ function getCourseInfoForAllDays(studioUrl) {
       dayUrl = studioUrl;
     }
     let promise = getCourseInfosForOneDay(dayUrl)
-      .then(courses => result[day] = courses);
+      .then(courses => courses.map(c => {
+        c.day = day;
+        return c;
+    }))
+      .then(courses => result = result.concat(courses));
     promises.push(promise);
   }
   return Promise.all(promises)
