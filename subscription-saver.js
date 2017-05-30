@@ -1,8 +1,8 @@
-const databaseService = require('./database-service.js');
+const subscriptionService = require('./database/subscription-service.js');
 
 exports.saveSubscription = (ctx) => {
   if (isValidSubscriptionRequest(ctx)) {
-    return databaseService.addSubscription(ctx.request.body)
+    return subscriptionService.addSubscription(ctx.request.body)
       .then(() => sendSuccessMessage(ctx))
       .catch((err) => sendErrorMessage(ctx));
   }
