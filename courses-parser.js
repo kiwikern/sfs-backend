@@ -3,8 +3,8 @@ const fetch = require("node-fetch");
 const config = require("./config.js");
 const jQuery = require('jquery');
 const fs = require('fs');
-const scheduleReader = require('./schedule-reader.js');
-const _ = require('lodash/core');
+const _ = require('lodash');
+const scheduleService = require('./database/schedule-service.js');
 
 /**
  * Returns true, if parsed schedule differs from previously
@@ -16,27 +16,19 @@ exports.parseCourses = () => {
 }
 
 function persist(scheduleJSON) {
-  return scheduleReader.getJSON()
+  return scheduleService.getLatestSchedule()
     .then(json => {
-      if (scheduleJSON && scheduleJSON.length > 0) {
-        saveToFile(scheduleJSON);
-        return !_.isEqual(json, scheduleJSON);
-      } else {
-        return false;
+      const isValid = scheduleJSON && scheduleJSON.length > 0;
+      if (isValid && isScheduleDifferent(json, scheduleJSON)) {
+          scheduleService.addSchedule(scheduleJSON);
+          return true;
       }
+      return false;
     });
 }
 
-function saveToFile(scheduleJSON) {
-  const newJSONString = JSON.stringify(scheduleJSON, null, 2);
-  fs.writeFile("./schedule.json", newJSONString, err => {
-    if (err) {
-      console.log('Writing to file failed.');
-      console.log(err);
-    } else {
-      console.log('file saved');
-    }
-  });
+function isScheduleDifferent(schedule1, schedule2) {
+  _(schedule1).differenceWith(schedule2, _.isEqual).isEmpty();
 }
 
 function getCourseInfosForAllStudios() {
@@ -72,7 +64,7 @@ function getCourseInfoForAllDays(studioUrl) {
       .then(courses => courses.map(c => {
         c.day = day;
         return c;
-    }))
+      }))
       .then(courses => result = result.concat(courses));
     promises.push(promise);
   }

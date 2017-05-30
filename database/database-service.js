@@ -5,12 +5,17 @@ const subscriptionService = require('./subscription-service.js');
 const scheduleService = require('./schedule-service.js');
 
 exports.init = () => {
-  MongoClient.connect(url, (err, db) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log('DatabaseService: init finished');
-      subscriptionService.init(db);
-    }
+  return new Promise((resolve, reject) =>  {
+    MongoClient.connect(url, (err, db) => {
+      if (err) {
+        console.log(err);
+        reject();
+      } else {
+        console.log('DatabaseService: init finished');
+        subscriptionService.init(db);
+        scheduleService.init(db);
+        resolve();
+      }
+    });
   });
 }
