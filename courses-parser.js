@@ -28,7 +28,7 @@ function persist(scheduleJSON) {
 }
 
 function isScheduleDifferent(schedule1, schedule2) {
-  _(schedule1).differenceWith(schedule2, _.isEqual).isEmpty();
+  return _(schedule1).differenceWith(schedule2, _.isEqual).isEmpty();
 }
 
 function getCourseInfosForAllStudios() {
