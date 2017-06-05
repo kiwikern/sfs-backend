@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userService = require('../database/user-service.js');
 const jwtSecret = require('../secrets.js').jwt;
@@ -64,7 +64,7 @@ function createUser(user) {
 function generateToken(user, ctx) {
   const content = {id: user._id, username: user.userName};
   try {
-    const jwtOptions = {algorithm: 'HS256', expiresIn: '1h'};
+    const jwtOptions = {algorithm: 'HS256', expiresIn: '168h'};
     const token =  jwt.sign(content, jwtSecret.privateKey, jwtOptions);
     ctx.response.body = {token, userName: user.userName};
     ctx.response.status = 201;
