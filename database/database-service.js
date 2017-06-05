@@ -4,6 +4,7 @@ const url = `mongodb://${mongoSecrets.user}:${mongoSecrets.password}@localhost:$
 const subscriptionService = require('./subscription-service.js');
 const scheduleService = require('./schedule-service.js');
 const userService = require('./user-service.js');
+const syncService = require('../sync/sync-service.js');
 
 exports.init = () => {
   return new Promise((resolve, reject) =>  {
@@ -16,6 +17,7 @@ exports.init = () => {
         subscriptionService.init(db);
         scheduleService.init(db);
         userService.init(db);
+        syncService.init(db);
         resolve();
       }
     });
