@@ -4,6 +4,8 @@
   "description": "schedule for superfit classes",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
+    "debug": "node --inspect index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Kim Kern <mail@kimkern.de>",
@@ -16,6 +18,7 @@
     "koa": "^2.2.0",
     "koa-bodyparser": "^2.5.0",
     "koa-json-body": "^5.3.0",
+    "koa-jwt": "^2.2.4",
     "koa-router": "^6",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.26",
