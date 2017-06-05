@@ -1,12 +1,12 @@
 const router = require('koa-router')();
+const userRegistration = require('../user/user-registration.js')
 
 exports.routes = () => router.routes();
 exports.allowedMethods = () => router.allowedMethods();
 
-router.post('/login', ctx => login(ctx));
-router.post('/register', ctx => ctx.body = {
-  token: 'jwtToken'
-});
+router.get('/', ctx => login(ctx));
+router.post('/', ctx => userRegistration.register(ctx));
+router.put('/:username', ctx => update(ctx));
 
 function login(ctx) {
   if (ctx.request.body.password === '123456') {
@@ -21,5 +21,4 @@ function login(ctx) {
       unknownUsername: false
     };
   }
-
 }
