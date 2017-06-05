@@ -3,29 +3,28 @@ const jwt = require('jsonwebtoken');
 const userService = require('../database/user-service.js');
 const jwtSecret = require('../secrets.js').jwt;
 
-exports.register = (ctx) => {
+exports.login = (ctx) => {
   const userBody = ctx.request.body;
   if (!isValidUser(userBody)) {
     ctx.response.body = {key: 'invalid_request'};
     ctx.response.status = 400;
     return false;
   }
-  return userService.findUser({userName: userBody.userName})
-    .then(user => user ? Promise.reject(new Error('username_exists')) : null)
-    .then(() => userService.findUser({mailAddress: userBody.mailAddress || 'n/a'}))
-    .then(user => user ? Promise.reject(new Error('mailaddress_exists')) : null)
-    .then(() => createUser(userBody))
-    .then(user => userService.addUser(user))
-    .then(result => userService.findUser({_id: result.insertedId}))
+  return userService.findUser(getSearchCond(userBody))
+    .then(user => user ? user : Promise.reject(new Error('user_not_found')))
+    .then(user => checkPassword(user, userBody.password))
     .then(user => generateToken(user, ctx))
     .catch(error => handleError(error, ctx));
 }
 
 function handleError(error, ctx) {
   switch(error.message) {
-    case 'mailaddress_exists':
-    case 'username_exists':
-      ctx.response.status = 400;
+    case 'user_not_found':
+      ctx.response.status = 404;
+      ctx.response.body = {key: error.message};
+      break;
+    case 'wrong_password':
+      ctx.response.status = 301;
       ctx.response.body = {key: error.message};
       break;
     case 'gen_token_failed':
@@ -41,24 +40,29 @@ function isValidUser(user) {
   if (!user) {
     return false;
   }
-  if (!user.userName && typeof user.userName == 'string') {
+  if (!user.userName && !user.mailAddress) {
+    return false;
+  }
+  if (user.userName && typeof user.userName !== 'string') {
     return false;
   }
   if (user.mailAddress && !user.mailAddress.includes('@')) {
     return false;
   }
-  if (!user.password || user.password.length < 6 && typeof user.password == 'string') {
+  if (!user.password || user.password.length < 6 || typeof user.password !== 'string') {
     return false;
   }
   return true;
 }
 
-function createUser(user) {
-  return hashPassword(user.password).then((password) => ({
-    userName: user.userName,
-    mailAddress: user.mailAddress,
-    password: password
-  }));
+function getSearchCond(user) {
+  if (user._id) {
+    return user;
+  }
+    return {$or: [
+      {mailAddress: user.mailAddress || 'NONE_GIVEN'},
+      {userName: user.userName}
+    ]};
 }
 
 function generateToken(user, ctx) {
@@ -73,14 +77,13 @@ function generateToken(user, ctx) {
   }
 }
 
-
-function hashPassword(password) {
+function checkPassword(user, requestPassword) {
   return new Promise((resolve, reject) => {
-    bcrypt.hash(password, 10, (err, hash) => {
-      if (!err) {
-        return resolve(hash);
+    bcrypt.compare(requestPassword, user.password, (err, isValid) => {
+      if (isValid) {
+        return resolve(user);
       } else {
-        return reject(err);
+        return reject(new Error('wrong_password'));
       }
     });
   });
