@@ -2,14 +2,16 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userService = require('../database/user-service.js');
 const jwtSecret = require('../secrets.js').jwt;
+const userSanitizer = require('./user-sanitizer.js');
 
 exports.login = (ctx) => {
-  const userBody = ctx.request.body;
-  if (!isValidUser(userBody)) {
+  const userBody = userSanitizer.getNormalizedUserIfValid(ctx.request.body);
+  if (!userBody) {
     ctx.response.body = {key: 'invalid_request'};
     ctx.response.status = 400;
     return false;
   }
+  console.log(userBody);
   return userService.findUser(getSearchCond(userBody))
     .then(user => user ? user : Promise.reject(new Error('user_not_found')))
     .then(user => checkPassword(user, userBody.password))
@@ -36,32 +38,15 @@ function handleError(error, ctx) {
     };
 }
 
-function isValidUser(user) {
-  if (!user) {
-    return false;
-  }
-  if (!user.userName && !user.mailAddress) {
-    return false;
-  }
-  if (user.userName && typeof user.userName !== 'string') {
-    return false;
-  }
-  if (user.mailAddress && !user.mailAddress.includes('@')) {
-    return false;
-  }
-  if (!user.password || user.password.length < 6 || typeof user.password !== 'string') {
-    return false;
-  }
-  return true;
-}
-
 function getSearchCond(user) {
   if (user._id) {
     return user;
   }
+    const userName = user.userName ? user.userName.toLowerCase() : null;
+    console.log('search: ' + userName);
     return {$or: [
       {mailAddress: user.mailAddress || 'NONE_GIVEN'},
-      {userName: user.userName}
+      {userName}
     ]};
 }
 

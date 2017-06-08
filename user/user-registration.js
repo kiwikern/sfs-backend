@@ -2,15 +2,16 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userService = require('../database/user-service.js');
 const jwtSecret = require('../secrets.js').jwt;
+const userSanitizer = require('./user-sanitizer.js');
 
 exports.register = (ctx) => {
-  const userBody = ctx.request.body;
-  if (!isValidUser(userBody)) {
+  const userBody = userSanitizer.getNormalizedUserIfValid(ctx.request.body);
+  if (!userBody || !userBody.userName) {
     ctx.response.body = {key: 'invalid_request'};
     ctx.response.status = 400;
     return false;
   }
-  return userService.findUser({userName: userBody.userName})
+  return userService.findUser({userName: userBody.userName.toLowerCase()})
     .then(user => user ? Promise.reject(new Error('username_exists')) : null)
     .then(() => userService.findUser({mailAddress: userBody.mailAddress || 'n/a'}))
     .then(user => user ? Promise.reject(new Error('mailaddress_exists')) : null)
@@ -35,22 +36,6 @@ function handleError(error, ctx) {
     default:
       ctx.response.status = 500;
     };
-}
-
-function isValidUser(user) {
-  if (!user) {
-    return false;
-  }
-  if (!user.userName && typeof user.userName == 'string') {
-    return false;
-  }
-  if (user.mailAddress && !user.mailAddress.includes('@')) {
-    return false;
-  }
-  if (!user.password || user.password.length < 6 && typeof user.password == 'string') {
-    return false;
-  }
-  return true;
 }
 
 function createUser(user) {
