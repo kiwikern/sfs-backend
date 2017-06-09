@@ -1,11 +1,19 @@
 now=$(date)
-echo "$now: started deploying" >> deploy.log
+deploy=~/bin/sfs-schedule
+
+# helper functions
+log() {
+  echo "$now: $1" >> $deploy/deploy.log
+}
+
+log "started deploying"
+cd $deploy
 echo "git pull"
 error=$(git pull 2>&1)
 rc=$?
 if [[ $rc != 0 ]]
 then
-  echo "$now: git pull errored" >> deploy.log
+  log "git pull errored"
   echo $error
   exit $rc
 fi
@@ -17,7 +25,7 @@ error=$(npm install 2>&1)
 rc=$?
 if [[ $rc != 0 ]]
 then
-  echo "$now: npm install errored" >> deploy.log
+  log "npm install errored"
   echo $error
   exit $rc
 fi
@@ -28,5 +36,4 @@ sleep 10s
 echo "$now: show last 10 lines of service log"
 readlog sfs-backend | tail -10
 
-echo "$now: deploy finished" >> deploy.log
-
+log "deploy finished"
