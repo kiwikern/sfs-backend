@@ -8,11 +8,6 @@ exports.postSyncStatus = (ctx) => {
   return syncService.findState({userid})
     .then(state => {
       if (state && state.lastUpdate !== ctx.request.body.lastUpdate) {
-        console.log('isEqual: ' + state.lastUpdate !== ctx.request.body.lastUpdate)
-        console.log('===DB STATE===')
-        console.log(state)
-        console.log('===REQ STATE===')
-        console.log(ctx.request.body)
         ctx.response.body = {key: 'sync_conflict'};
         ctx.response.status = 409;
         return;
