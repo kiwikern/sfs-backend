@@ -11,7 +11,6 @@ exports.login = (ctx) => {
     ctx.response.status = 400;
     return false;
   }
-  console.log(userBody);
   return userService.findUser(getSearchCond(userBody))
     .then(user => user ? user : Promise.reject(new Error('user_not_found')))
     .then(user => checkPassword(user, userBody.password))
@@ -43,7 +42,6 @@ function getSearchCond(user) {
     return user;
   }
     const userName = user.userName ? user.userName.toLowerCase() : null;
-    console.log('search: ' + userName);
     return {$or: [
       {mailAddress: user.mailAddress || 'NONE_GIVEN'},
       {userName}
