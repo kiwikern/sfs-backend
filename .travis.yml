@@ -7,8 +7,6 @@ addons:
   apt:
     packages:
       - sshpass
-before_install:
-- npm install -g jasmine-node
 script: npm run test:ci
 deploy:
   skip_cleanup: true

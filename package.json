@@ -4,9 +4,10 @@
   "description": "schedule for superfit classes",
   "main": "index.js",
   "scripts": {
+    "jasmine-node": "jasmine-node",
     "start": "nodemon src/index.js",
-    "test": "jasmine-node src/spec --autotest --watch src",
-    "test:ci": "jasmine-node spec",
+    "test": "npm run test:ci -- --autotest --watch src",
+    "test:ci": "npm run jasmine-node -- src/spec",
     "debug": "node --inspect src/index.js"
   },
   "author": "Kim Kern <mail@kimkern.de>",
