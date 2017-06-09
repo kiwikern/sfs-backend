@@ -1,7 +1,7 @@
-const syncService = require('./sync.service.js');
+let syncService = require('./sync.service.js');
 
 exports.getSyncStatus = (ctx) => {
-  if (ctx.state.user && ctx.state.user.id) {
+  if (ctx.state.user.id) {
     return syncService.findState({userid: ctx.state.user.id})
       .then(state => {
         if (state) {
@@ -11,6 +11,10 @@ exports.getSyncStatus = (ctx) => {
           ctx.response.status = 200;
           ctx.response.body = {key: 'no_sync_status_found'};
         }
+      })
+      .catch(error => {
+        console.log(error);
+        ctx.response.status = 500;
       });
   } else {
     ctx.response.status = 400;

@@ -1,4 +1,4 @@
-const syncService = require('./sync.service.js');
+let syncService = require('./sync.service.js');
 
 exports.postSyncStatus = (ctx) => {
   if (!isValidRequest(ctx)) {
@@ -18,29 +18,39 @@ exports.postSyncStatus = (ctx) => {
         return syncService.addState(newState)
           .then(() => syncService.findState({userid}))
           .then(state => {
-            ctx.response.state = 200;
+            ctx.response.status = 200;
             ctx.response.body = {lastUpdate: state.lastUpdate};
           });
       }
     })
+    .catch(error => {
+      console.log(error);
+      ctx.response.status = 500;
+    });
 };
 
 function isValidRequest(ctx) {
   const body = ctx.request.body;
   if (!body) {
-    ctx.response.body = "{key: 'missing_body'}";
+    ctx.response.body = {key: 'missing_body'};
     ctx.response.status = 400;
     return false
   }
   if (!body.lastUpdate && body.lastUpdate !== 0) {
-    ctx.body = "{missing_lastupdate}";
+    ctx.response.body = {key: 'missing_lastupdate'};
     ctx.response.status = 400;
     return false;
   }
   if (!body.state) {
-    ctx.body = "{missing_state}";
+    ctx.response.body = {key: 'missing_state'};
     ctx.response.status = 400;
     return false;
+  }
+  if (!ctx.state.user.id) {
+    ctx.response.body = {key: 'missing_userid'};
+    ctx.response.status = 400;
+    return false;
+
   }
   return true;
 }
