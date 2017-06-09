@@ -24,7 +24,7 @@ exports.getNormalizedUserIfValid = (user) => {
 }
 
 function isInvalidUserName(userName) {
-  return !userName || !validator.matches(userName.trim(), /[\w\d]+/i);
+  return !userName || !validator.matches(userName.trim(), /^[\w\d]+$/i);
 }
 
 function isInvalidMailAddress(mail) {
