@@ -9,15 +9,10 @@ addons:
       - sshpass
 before_install:
 - npm install -g jasmine-node
-jobs:
-  include:
-    - stage: test
-      script: npm run test:ci
-    - stage: deploy
-      script: echo 'Deploying...'
-      deploy:
-        skip_cleanup: true
-        provider: script
-        script: sshpass -p $DEPLOY_SSH_PASSWORD ssh -o StrictHostKeyChecking=no $DEPLOY_SSH_USER@$DEPLOY_SSH_HOST -t "$DEPLOY_SSH_PATH/deploy.sh"
-        on:
-          tag: release
+script: npm run test:ci
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: sshpass -p $DEPLOY_SSH_PASSWORD ssh -o StrictHostKeyChecking=no $DEPLOY_SSH_USER@$DEPLOY_SSH_HOST -t "$DEPLOY_SSH_PATH/deploy.sh"
+  on:
+    tags: true
