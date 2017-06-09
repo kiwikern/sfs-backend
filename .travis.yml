@@ -1,5 +1,7 @@
 dist: trusty
 language: node_js
+services:
+  - mongodb
 node_js:
 - '7'
 addons:
@@ -7,6 +9,10 @@ addons:
   apt:
     packages:
       - sshpass
+before_script:
+  - mongo sfstest --eval 'db.addUser("testuser", "test");'
+  - mv travis.secrets.js src/secrets.js
+  - sleep 15
 script: npm run test:ci
 deploy:
   skip_cleanup: true

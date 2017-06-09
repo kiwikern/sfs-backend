@@ -4,10 +4,15 @@
   "description": "schedule for superfit classes",
   "main": "index.js",
   "scripts": {
-    "jasmine-node": "jasmine-node",
+    "jasmine": "jasmine",
     "start": "nodemon src/index.js",
-    "test": "npm run test:ci -- --autotest --watch src",
-    "test:ci": "npm run jasmine-node -- src/spec",
+    "pretest": "move src\\secrets.js src\\_secrets.js && copy travis.secrets.js src\\secrets.js",
+    "test": "npm run unit:test && npm run int:test",
+    "posttest": "del src\\secrets.js && move src\\_secrets.js src\\secrets.js",
+    "int:test": "npm run jasmine -- --config=src/test/jasmine.json",
+    "unit:test": "npm run jasmine -- --config=src/spec/jasmine.json",
+    "unit:watch": "nodemon --exec npm run unit:test",
+    "test:ci": "npm run unit:test && npm run int:test",
     "debug": "node --inspect src/index.js"
   },
   "author": "Kim Kern <mail@kimkern.de>",
@@ -30,7 +35,8 @@
     "web-push": "^3.2.2"
   },
   "devDependencies": {
-    "jasmine-node": "^1.14.5",
-    "rewire": "^2.5.2"
+    "jasmine": "^2.6.0",
+    "rewire": "^2.5.2",
+    "supertest": "^3.0.0"
   }
 }

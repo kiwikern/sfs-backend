@@ -25,7 +25,7 @@ function handleError(error, ctx) {
       ctx.response.body = {key: error.message};
       break;
     case 'wrong_password':
-      ctx.response.status = 301;
+      ctx.response.status = 401;
       ctx.response.body = {key: error.message};
       break;
     case 'gen_token_failed':

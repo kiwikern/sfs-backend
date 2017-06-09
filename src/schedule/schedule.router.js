@@ -1,16 +1,17 @@
 const router = require('koa-router')();
-const databaseService = require('../database/database.service.js');
 const scheduleService = require('./schedule.service.js');
 const cron = require('node-cron');
 const scheduleParser = require('./schedule.parser.js');
 
 exports.routes = () => router.routes();
 
-databaseService.init()
-  .then(scheduleService.getLatestSchedule)
-  .then(json => json ? schedule = json : json)
-  .then(scheduleService.getLatestUpdateDate)
-  .then(date => latestUpdateDate = date);
+exports.init = (promise) => {
+  return promise
+    .then(scheduleService.getLatestSchedule)
+    .then(json => json ? schedule = json : json)
+    .then(scheduleService.getLatestUpdateDate)
+    .then(date => latestUpdateDate = date);
+}
 
   router.get('/', ctx => {
     ctx.body = schedule;

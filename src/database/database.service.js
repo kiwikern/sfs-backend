@@ -1,6 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 const mongoSecrets = require('../secrets.js').mongo;
-const url = `mongodb://${mongoSecrets.user}:${mongoSecrets.password}@localhost:${mongoSecrets.port}/sfs`;
+const url = `mongodb://${mongoSecrets.user}:${mongoSecrets.password}@localhost:${mongoSecrets.port}/${mongoSecrets.dbname}`;
 const pushService = require('../push/push.service.js');
 const scheduleService = require('../schedule/schedule.service.js');
 const userService = require('../user/user.service.js');
