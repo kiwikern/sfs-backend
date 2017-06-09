@@ -4,11 +4,10 @@
   "description": "schedule for superfit classes",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
-    "test": "jasmine-node spec --autotest --watch .",
+    "start": "nodemon src/index.js",
+    "test": "jasmine-node src/spec --autotest --watch src",
     "test:ci": "jasmine-node spec",
-    "debug": "node --inspect index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "debug": "node --inspect src/index.js"
   },
   "author": "Kim Kern <mail@kimkern.de>",
   "license": "ISC",

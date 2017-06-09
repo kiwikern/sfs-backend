@@ -1,11 +1,10 @@
 const router = require('koa-router')();
-const databaseService = require('../database/database-service.js');
-const scheduleService = require('../database/schedule-service.js');
+const databaseService = require('../database/database.service.js');
+const scheduleService = require('./schedule.service.js');
 const cron = require('node-cron');
-const coursesParser = require('../courses-parser.js');
+const scheduleParser = require('./schedule.parser.js');
 
 exports.routes = () => router.routes();
-exports.allowedMethods = () => router.allowedMethods();
 
 databaseService.init()
   .then(scheduleService.getLatestSchedule)
@@ -29,7 +28,7 @@ databaseService.init()
   cron.schedule('0 4 * * *', reload);
 
   function reload() {
-    coursesParser.parseCourses()
+    scheduleParser.parseCourses()
       .then(hasChanged => hasChanged ? notificationSender.sendPush() : false)
       .then(scheduleService.getLatestSchedule)
       .then(json => json ? schedule = json : json)

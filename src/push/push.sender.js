@@ -1,6 +1,6 @@
-const vapidKeys = require('./secrets.js').vapidKeys;
+const vapidKeys = require('../secrets.js').vapidKeys;
 const webpush = require('web-push');
-const subscriptionService = require('./database/subscription-service.js');
+const pushService = require('./push.service.js');
 
 exports.init = () => {
   webpush.setVapidDetails(
@@ -12,7 +12,7 @@ exports.init = () => {
 };
 
 exports.sendPush = () => {
-  subscriptionService.getAllSubscriptions().
+  pushService.getAllSubscriptions().
     then(sendToAllSubscriptions);
 };
 
@@ -29,7 +29,7 @@ function sendToAllSubscriptions(subscriptions) {
     webpush.sendNotification(subscription, JSON.stringify(data))
       .then(success => console.log('notification sent.'))
       .catch(error => {
-        subscriptionService.deleteSubscription(subscription);
+        pushService.deleteSubscription(subscription);
       });
   });
 }

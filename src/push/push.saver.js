@@ -1,12 +1,24 @@
-const subscriptionService = require('./database/subscription-service.js');
+const pushService = require('./push.service.js');
 
 exports.saveSubscription = (ctx) => {
   if (isValidSubscriptionRequest(ctx)) {
-    return subscriptionService.addSubscription(ctx.request.body)
+    const subscription = createSubscription(ctx.request.body);
+    return pushService.addSubscription(subscription)
       .then(() => sendSuccessMessage(ctx))
       .catch((err) => sendErrorMessage(ctx));
   }
 }
+
+function createSubscription(subscription) {
+  return {
+    endpoint: subscription.endpoint,
+    expirationTime: subscription.expirationTime,
+    keys: {
+      p256dh: subscription.p256dh,
+      auth: subscription.auth
+    }
+  }
+};
 
 function isValidSubscriptionRequest(ctx) {
   if (!ctx.request.body.endpoint) {

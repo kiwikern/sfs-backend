@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const userService = require('../database/user-service.js');
+const userService = require('./user.service.js');
 const jwtSecret = require('../secrets.js').jwt;
-const userSanitizer = require('./user-sanitizer.js');
+const userSanitizer = require('./user.sanitizer.js');
 
 exports.login = (ctx) => {
   const userBody = userSanitizer.getNormalizedUserIfValid(ctx.request.body);

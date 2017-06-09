@@ -1,4 +1,4 @@
-const syncService = require('./sync-service.js');
+const syncService = require('./sync.service.js');
 
 exports.getSyncStatus = (ctx) => {
   if (ctx.state.user && ctx.state.user.id) {

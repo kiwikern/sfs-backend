@@ -1,4 +1,4 @@
-const syncService = require('./sync-service.js');
+const syncService = require('./sync.service.js');
 
 exports.postSyncStatus = (ctx) => {
   if (!isValidRequest(ctx)) {
