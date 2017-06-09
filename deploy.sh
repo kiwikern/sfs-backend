@@ -1,5 +1,5 @@
 now=$(date)
-deploy=~/bin/sfs-schedule
+deploy=~/bin/sfs-backend
 
 # helper functions
 log() {
@@ -8,12 +8,13 @@ log() {
 
 log "started deploying"
 cd $deploy
-echo "git pull"
-error=$(git pull 2>&1)
+latesttag=$(git describe --tags)
+log "checking out ${latesttag}"
+error=$(git checkout ${latesttag} 2>&1)
 rc=$?
 if [[ $rc != 0 ]]
 then
-  log "git pull errored"
+  log "git checkout errored"
   echo $error
   exit $rc
 fi
