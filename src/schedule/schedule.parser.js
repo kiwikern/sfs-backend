@@ -1,10 +1,9 @@
 const jsdom = require("jsdom");
-const fetch = require("node-fetch");
-const config = require("../config.js");
+let fetch = require("node-fetch");
+let config = require("../config.js");
 const jQuery = require('jquery');
-const fs = require('fs');
 const _ = require('lodash');
-const scheduleService = require('./schedule.service.js');
+let scheduleService = require('./schedule.service.js');
 
 /**
  * Returns true, if parsed schedule differs from previously
