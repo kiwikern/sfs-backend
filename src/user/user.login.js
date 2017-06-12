@@ -1,8 +1,7 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const userService = require('./user.service.js');
-const jwtSecret = require('../secrets.js').jwt;
 const userSanitizer = require('./user.sanitizer.js');
+const tokenGenerator = require('./token.generator.js');
 
 exports.login = (ctx) => {
   const userBody = userSanitizer.getNormalizedUserIfValid(ctx.request.body);
@@ -14,7 +13,7 @@ exports.login = (ctx) => {
   return userService.findUser(getSearchCond(userBody))
     .then(user => user ? user : Promise.reject(new Error('user_not_found')))
     .then(user => checkPassword(user, userBody.password))
-    .then(user => generateToken(user, ctx))
+    .then(user => tokenGenerator.generateToken(user, ctx))
     .catch(error => handleError(error, ctx));
 }
 
@@ -46,18 +45,6 @@ function getSearchCond(user) {
       {mailAddress: user.mailAddress || 'NONE_GIVEN'},
       {userName}
     ]};
-}
-
-function generateToken(user, ctx) {
-  const content = {id: user._id, username: user.userName};
-  try {
-    const jwtOptions = {algorithm: 'HS256', expiresIn: '1h'};
-    const token =  jwt.sign(content, jwtSecret.privateKey, jwtOptions);
-    ctx.response.body = {token, userName: user.userName};
-    ctx.response.status = 201;
-  } catch (error) {
-    throw new Error('gen_token_failed');
-  }
 }
 
 function checkPassword(user, requestPassword) {

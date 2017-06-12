@@ -1,8 +1,7 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const userService = require('./user.service.js');
-const jwtSecret = require('../secrets.js').jwt;
 const userSanitizer = require('./user.sanitizer.js');
+const tokenGenerator = require('./token.generator.js');
 
 exports.register = (ctx) => {
   const userBody = userSanitizer.getNormalizedUserIfValid(ctx.request.body);
@@ -18,7 +17,7 @@ exports.register = (ctx) => {
     .then(() => createUser(userBody))
     .then(user => userService.addUser(user))
     .then(result => userService.findUser({_id: result.insertedId}))
-    .then(user => generateToken(user, ctx))
+    .then(user => tokenGenerator.generateToken(user, ctx))
     .catch(error => handleError(error, ctx));
 }
 
@@ -45,19 +44,6 @@ function createUser(user) {
     password: password
   }));
 }
-
-function generateToken(user, ctx) {
-  const content = {id: user._id, username: user.userName};
-  try {
-    const jwtOptions = {algorithm: 'HS256', expiresIn: '168h'};
-    const token =  jwt.sign(content, jwtSecret.privateKey, jwtOptions);
-    ctx.response.body = {token, userName: user.userName};
-    ctx.response.status = 201;
-  } catch (error) {
-    throw new Error('gen_token_failed');
-  }
-}
-
 
 function hashPassword(password) {
   return new Promise((resolve, reject) => {
