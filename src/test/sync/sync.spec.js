@@ -1,12 +1,16 @@
 const request = require('supertest');
-const app = require('../index.js');
-const dbHelper = require('./db.helper.js');
+const app = require('../../index.js');
+const dbHelper = require('../db.helper.js');
+const userHelper = require('../user/user.helper.js');
+const syncHelper = require('./sync.helper.js');
 
 describe('Sync', () => {
-  let agent;
   beforeAll((done) => {
+    let agent;
     app.init.then(() => agent = request.agent(app.listen()))
       .then(() => dbHelper.init())
+      .then(() => userHelper.init(agent))
+      .then(() => syncHelper.init(agent))
       .then(() => done());
   });
 
@@ -19,15 +23,14 @@ describe('Sync', () => {
     };
 
     dbHelper.drop()
-      .then(() => agent.post('/user').send(user))
+      .then(() => userHelper.register(user))
       .then(response => token = response.body.token)
       .then(() => done());
   });
 
 
   it('should reject GET without auth', (done) => {
-    agent
-      .get('/sync')
+    syncHelper.getSync(null)
       .then(response => {
         expect(response.status).toBe(401);
         done();
@@ -35,7 +38,7 @@ describe('Sync', () => {
   });
 
   it('should reject POST without auth', (done) => {
-    agent.post('/sync').send({})
+    syncHelper.getSync({})
     .then(response => {
       expect(response.status).toBe(401);
       done();
@@ -43,10 +46,7 @@ describe('Sync', () => {
   });
 
   it('should GET sync status', (done) => {
-    agent
-      .get('/sync')
-      .set('Authorization', 'bearer ' + token)
-      .send()
+    syncHelper.getSync(token)
       .then(response => {
         expect(response.status).toBe(200);
         expect(response.body.key).toBe('no_sync_status_found');
@@ -56,16 +56,14 @@ describe('Sync', () => {
 
   it('should save (POST) sync status and return it (GET) with new lastUpdate', (done) => {
     const date = Date.now();
-    agent
-      .post('/sync')
-      .set('Authorization', 'bearer ' + token)
-      .send({lastUpdate: 2, state: {favorites: 10}})
+    const syncState = {lastUpdate: 2, state: {favorites: 10}};
+    syncHelper.postSync(token, syncState)
       .then(response => {
         expect(response.status).toBe(200);
         expect(response.body.lastUpdate).toBeGreaterThan(date);
-        // expect(response.body.token).not.toBe(null);
+        expect(response.body.token).not.toBe(null);
       })
-      .then(() => agent.get('/sync').set('Authorization', 'bearer ' + token).send())
+      .then(() => syncHelper.getSync(token))
       .then(response => {
         expect(response.status).toBe(200);
         expect(response.body.lastUpdate).toBeGreaterThan(date);

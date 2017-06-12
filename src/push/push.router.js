@@ -10,5 +10,5 @@ pushSender.init();
 router.post('/', (ctx) => pushSaver.saveSubscription(ctx));
 
 // protected routes
-router.use(jwt({secret: jwtSecret.privateKey}));
+// router.use(jwt({secret: jwtSecret.privateKey}));
 router.get('/send', pushSender.sendPush);

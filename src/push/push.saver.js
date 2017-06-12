@@ -23,13 +23,8 @@ function createSubscription(subscription) {
 function isValidSubscriptionRequest(ctx) {
   if (!ctx.request.body.endpoint) {
     ctx.response.status = 400;
-    let error = {
-      error: {
-        id: 'no-endpoint',
-        message: 'Subscription must have an endpoint.'
-      }
-    };
-    ctx.response.body = JSON.stringify(error);
+    let error = { key: 'no-endpoint' };
+    ctx.response.body = error;
     return false;
   } else {
     return true;
@@ -38,13 +33,7 @@ function isValidSubscriptionRequest(ctx) {
 
 function sendSuccessMessage(ctx) {
   console.log('successfully added subscription');
-  const successMessage = {
-    data: {
-      success: true
-    }
-  };
   ctx.status = 200;
-  ctx.body = JSON.stringify(successMessage);
 }
 
 function sendErrorMessage(ctx) {

@@ -1,12 +1,14 @@
 const request = require('supertest');
-const app = require('../index.js');
-const dbHelper = require('./db.helper.js');
+const app = require('../../index.js');
+const dbHelper = require('../db.helper.js');
+let userHelper = require('./user.helper.js');
 
 describe('User registration and login', () => {
-  let agent;
   beforeAll((done) => {
+    let agent;
     app.init.then(() => agent = request.agent(app.listen()))
       .then(() => dbHelper.init())
+      .then(() => userHelper.init(agent))
       .then(() => done());
   });
 
@@ -22,8 +24,7 @@ describe('User registration and login', () => {
   };
 
   it('should reject empty registration', (done) => {
-    agent
-      .post('/user')
+    userHelper.register(null)
       .then(response => {
         expect(response.status).toBe(400);
         expect(response.body.key).toBe('invalid_request');
@@ -31,16 +32,14 @@ describe('User registration and login', () => {
       });
   });
 
-  it('should accept registration', (done) => {
-    agent
-      .post('/user')
-      .send(user)
+  it('should accept registration but deny double', (done) => {
+    userHelper.register(user)
       .then(response => {
         expect(response.status).toBe(201);
         expect(response.body.userName).toBe(user.userName);
         expect(response.body.token).not.toBe(null);
       })
-      .then(() => agent.post('/user').send(user))
+      .then(() => userHelper.register(user))
       .then(response => {
         expect(response.status).toBe(400);
         expect(response.body.key).toBe('username_exists');
@@ -49,10 +48,8 @@ describe('User registration and login', () => {
   });
 
   it('should accept login', (done) => {
-    agent
-      .post('/user')
-      .send(user)
-      .then(() => agent.post('/user/session').send(user))
+    userHelper.register(user)
+      .then(() => userHelper.login(user))
       .then(response => {
         expect(response.status).toBe(201);
         expect(response.body.userName).toBe(user.userName);
@@ -62,7 +59,7 @@ describe('User registration and login', () => {
   });
 
   it('should deny login', (done) => {
-    agent.post('/user/session').send(user)
+    userHelper.login(user)
       .then(response => {
         expect(response.status).toBe(404);
         expect(response.body.key).toBe('user_not_found');
