@@ -1,5 +1,5 @@
 const MongoClient = require('mongodb').MongoClient
-const mongoSecrets = require('../secrets.js').mongo;
+const mongoSecrets = require('../../src/secrets.js').mongo;
 const url = `mongodb://${mongoSecrets.user}:${mongoSecrets.password}@localhost:${mongoSecrets.port}/${mongoSecrets.dbname}`;
 
 let db;

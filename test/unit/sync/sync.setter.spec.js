@@ -1,5 +1,5 @@
 const rewire = require('rewire');
-const syncSetter = rewire('../../sync/sync.setter.js');
+const syncSetter = rewire('../../../src/sync/sync.setter.js');
 
 describe(`SyncSetter`, () => {
   let ctx;

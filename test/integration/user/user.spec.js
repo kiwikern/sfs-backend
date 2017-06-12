@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../../index.js');
+const app = require('../../../src/index.js');
 const dbHelper = require('../db.helper.js');
 let userHelper = require('./user.helper.js');
 

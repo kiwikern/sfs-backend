@@ -1,4 +1,4 @@
-const userSanitizer = require('../../user/user.sanitizer.js');
+const userSanitizer = require('../../../src/user/user.sanitizer.js');
 
 describe(`UserSanitizer`, () => {
 

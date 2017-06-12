@@ -1,5 +1,5 @@
 const rewire = require('rewire');
-const scheduleParser = rewire('../../schedule/schedule.parser.js');
+const scheduleParser = rewire('../../../src/schedule/schedule.parser.js');
 
 describe(`ScheduleParser`, () => {
   beforeEach(() => {
