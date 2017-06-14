@@ -61,7 +61,7 @@ describe('User registration and login', () => {
   it('should deny login', (done) => {
     userHelper.login(user)
       .then(response => {
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(401);
         expect(response.body.key).toBe('user_not_found');
         done();
       });

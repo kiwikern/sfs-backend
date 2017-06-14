@@ -1,7 +1,7 @@
-const bcrypt = require('bcryptjs');
-const userService = require('./user.service.js');
-const userSanitizer = require('./user.sanitizer.js');
-const tokenGenerator = require('./token.generator.js');
+let bcrypt = require('bcryptjs');
+let userService = require('./user.service.js');
+let userSanitizer = require('./user.sanitizer.js');
+let tokenGenerator = require('./token.generator.js');
 
 exports.login = (ctx) => {
   const userBody = userSanitizer.getNormalizedUserIfValid(ctx.request.body);
@@ -20,9 +20,6 @@ exports.login = (ctx) => {
 function handleError(error, ctx) {
   switch(error.message) {
     case 'user_not_found':
-      ctx.response.status = 404;
-      ctx.response.body = {key: error.message};
-      break;
     case 'wrong_password':
       ctx.response.status = 401;
       ctx.response.body = {key: error.message};
@@ -38,7 +35,7 @@ function handleError(error, ctx) {
 
 function getSearchCond(user) {
   if (user._id) {
-    return user;
+    return {_id: user._id};
   }
     const userName = user.userName ? user.userName.toLowerCase() : null;
     return {$or: [
