@@ -8,9 +8,9 @@ log() {
 
 log "started deploying"
 cd $deploy
-latesttag=$(git describe --tags)
+#latesttag=$(git describe --tags)
 log "checking out ${latesttag}"
-error=$(git checkout ${latesttag} 2>&1)
+error=$(git pull 2>&1)
 rc=$?
 if [[ $rc != 0 ]]
 then
