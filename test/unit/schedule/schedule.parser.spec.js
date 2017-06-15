@@ -26,7 +26,7 @@ describe(`ScheduleParser`, () => {
   function getMock(getResultFn) {
     return {
       fetch: () => Promise.resolve({text: () => getHTML()}),
-      config: {studios: ['steglitz', 'europa'], days: ['mo', 'di'], baseUrl: ''},
+      config: {studios: ['steglitz', 'europa'], days: ['mo', 'di'], baseUrl: '', types: ['']},
       scheduleService: {
         getLatestSchedule: () => Promise.resolve([]),
         addSchedule: schedule => getResultFn(schedule)

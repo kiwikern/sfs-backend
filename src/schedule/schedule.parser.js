@@ -11,7 +11,7 @@ let workoutService = require('./workout.service.js');
  * persisted schedule.
  */
 exports.parseCourses = () => {
-  return getCourseInfosForAllStudios()
+  return getCourseInfosForAllStudiosForAllTypes()
     .then(json => workoutService.addWorkouts(json))
     .then(ids => persist(ids));
 };
@@ -34,11 +34,29 @@ function areSchedulesDifferent(schedule1, schedule2) {
   return !_.isEqual(schedule1.sort(), schedule2.sort());
 }
 
-function getCourseInfosForAllStudios() {
+function getCourseInfosForAllStudiosForAllTypes() {
+  let schedule = [];
+  let promises = [];
+  for (let type of config.types) {
+    const typeName = type === 'kursplaene' ? 'class' : 'teamtraining';
+    let promise = getCourseInfosForAllStudios(type)
+      .then(courses => courses.map(c => {
+        c.type = typeName;
+        return c;
+      }))
+      .then(courses => schedule = schedule.concat(courses))
+      .catch(error => console.log(error));
+    promises.push(promise);
+  }
+  return Promise.all(promises)
+    .then(() => schedule);
+}
+
+function getCourseInfosForAllStudios(type) {
   let schedule = [];
   let promises = [];
   for (let studio of config.studios) {
-    const studioUrl = config.baseUrl + '/' + studio;
+    const studioUrl = config.baseUrl + type + '/' + studio;
     let promise = getCourseInfoForAllDays(studioUrl)
       .then(courses => courses.map(c => {
         c.studio = studio;
