@@ -43,16 +43,16 @@ describe(`SyncSetter`, () => {
   });
 
   it('should return 200 when no state is found', (done) => {
-    syncSetter.__set__(getServiceMock(1, false));
+    syncSetter.__set__(getServiceMock(null, {lastUpdate: 1, state: 2}, true));
     syncSetter.postSyncStatus(ctx).then(() => {
       expect(ctx.response.status).toBe(200);
-      expect(ctx.response.body.lastUpdate).toBe(2);
+      expect(ctx.response.body.lastUpdate).toBe(1);
       done();
     });
   });
 
   it('should return 200 when state is found and lastUpdate equal', (done) => {
-    syncSetter.__set__(getServiceMock(1, true));
+    syncSetter.__set__(getServiceMock({lastUpdate: 1, state: 5}, {lastUpdate: 2, state: 2}, true));
     syncSetter.postSyncStatus(ctx).then(() => {
       expect(ctx.response.status).toBe(200);
       expect(ctx.response.body.lastUpdate).toBe(2);
@@ -60,8 +60,17 @@ describe(`SyncSetter`, () => {
     });
   });
 
+  it('should return 200 but not save when equal state is found and lastUpdate equal', (done) => {
+    syncSetter.__set__(getServiceMock({lastUpdate: 1, state: 2}, {lastUpdate: 1, state: 2}, false));
+    syncSetter.postSyncStatus(ctx).then(() => {
+      expect(ctx.response.status).toBe(200);
+      expect(ctx.response.body.lastUpdate).toBe(1);
+      done();
+    });
+  });
+
   it('should return 409 when state is found and lastUpdate not equal', (done) => {
-    syncSetter.__set__(getServiceMock(5, true));
+    syncSetter.__set__(getServiceMock({lastUpdate: 5, state: 2}, null, false));
     syncSetter.postSyncStatus(ctx).then(() => {
       expect(ctx.response.status).toBe(409);
       expect(ctx.response.body.key).toBe('sync_conflict');
@@ -81,31 +90,36 @@ describe(`SyncSetter`, () => {
     });
   });
 
-  function getServiceMock(lastUpdate, doReturnFirst) {
+  function getServiceMock(firstFoundState, secondFoundState, shouldSaveState) {
     let count = 0;
     return {
       syncService: {
         findState: () => {
           count++;
           if (count == 1) {
-            const result = doReturnFirst ? {lastUpdate} : null;
-            return Promise.resolve(result);
+            return Promise.resolve(firstFoundState);
           } else {
-            return Promise.resolve({lastUpdate: lastUpdate + 1});
+            return Promise.resolve(secondFoundState);
           }
         },
-        addState: () => Promise.resolve()
+        addState: () => {
+          if (shouldSaveState) {
+            return Promise.resolve();
+          } else {
+            return Promise.reject(new Error('Should not save!'));
+          }
+        }
       }
     };
   }
 
   function getServiceErrorMock(error, log) {
     return {
-    syncService: {
-      findState: () => Promise.reject(error),
-      addState: () => Promise.resolve()
-    },
-    console: {log}
+      syncService: {
+        findState: () => Promise.reject(error),
+        addState: () => Promise.resolve()
+      },
+      console: {log}
     }
   }
 

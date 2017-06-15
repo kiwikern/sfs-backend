@@ -1,7 +1,7 @@
 const rewire = require('rewire');
 const userLogin = rewire('../../../src/user/user.login.js');
 
-fdescribe(`UserLogin`, () => {
+describe(`UserLogin`, () => {
   let ctx;
   beforeEach(() => {
     ctx = {response: {}, request: {}};

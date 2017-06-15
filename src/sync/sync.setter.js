@@ -1,4 +1,5 @@
 let syncService = require('./sync.service.js');
+let _ = require('lodash');
 
 exports.postSyncStatus = (ctx) => {
   if (!isValidRequest(ctx)) {
@@ -12,15 +13,14 @@ exports.postSyncStatus = (ctx) => {
         ctx.response.status = 409;
         return;
       } else {
-        const token = ctx.state.user;
-        const state = ctx.request.body.state;
-        const newState = {userid: token.id, state, lastUpdate: Date.now()};
-        return syncService.addState(newState)
-          .then(() => syncService.findState({userid}))
-          .then(state => {
-            ctx.response.status = 200;
-            ctx.response.body = {lastUpdate: state.lastUpdate};
-          });
+        const requestState= ctx.request.body.state;
+        if (state && state.state && _.isEqual(state.state, requestState)) {
+          ctx.response.body = {lastUpdate: state.lastUpdate};
+          ctx.response.status = 200;
+        } else {
+          return saveSyncState(ctx);
+        }
+        return;
       }
     })
     .catch(error => {
@@ -53,4 +53,16 @@ function isValidRequest(ctx) {
 
   }
   return true;
+}
+
+function saveSyncState(ctx) {
+  const userid = ctx.state.user.id;
+  const state = ctx.request.body.state;
+  const newState = {userid, state, lastUpdate: Date.now()};
+  return syncService.addState(newState)
+    .then(() => syncService.findState({userid}))
+    .then(state => {
+      ctx.response.status = 200;
+      ctx.response.body = {lastUpdate: state.lastUpdate};
+    });
 }
