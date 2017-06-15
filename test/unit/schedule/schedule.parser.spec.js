@@ -28,9 +28,12 @@ describe(`ScheduleParser`, () => {
       fetch: () => Promise.resolve({text: () => getHTML()}),
       config: {studios: ['steglitz', 'europa'], days: ['mo', 'di'], baseUrl: ''},
       scheduleService: {
-        getLatestSchedule: () => Promise.resolve({}),
+        getLatestSchedule: () => Promise.resolve([]),
         addSchedule: schedule => getResultFn(schedule)
       },
+      workoutService: {
+        addWorkouts: s => s
+      }
     };
   }
 
@@ -38,7 +41,7 @@ describe(`ScheduleParser`, () => {
     return {
       syncService: {findState: () => Promise.reject(error)},
       console: {log},
-      scheduleService: {getLatestSchedule: () => Promise.resolve()}
+      scheduleService: {getLatestSchedule: () => Promise.resolve()},
     };
   }
 

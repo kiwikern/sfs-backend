@@ -4,6 +4,7 @@ let config = require("../config.js");
 const jQuery = require('jquery');
 const _ = require('lodash');
 let scheduleService = require('./schedule.service.js');
+let workoutService = require('./workout.service.js');
 
 /**
  * Returns true, if parsed schedule differs from previously
@@ -11,23 +12,26 @@ let scheduleService = require('./schedule.service.js');
  */
 exports.parseCourses = () => {
   return getCourseInfosForAllStudios()
-    .then(json => persist(json));
-}
+    .then(json => workoutService.addWorkouts(json))
+    .then(ids => persist(ids));
+};
 
-function persist(scheduleJSON) {
+function persist(newIds) {
   return scheduleService.getLatestSchedule()
-    .then(json => {
-      const isValid = scheduleJSON && scheduleJSON.length > 0;
-      if (isValid && isScheduleDifferent(json, scheduleJSON)) {
-          scheduleService.addSchedule(scheduleJSON);
-          return true;
+    .then(oldIds => {
+      const isValid = newIds && newIds.length > 0;
+      console.log('schedules are different: ' + areSchedulesDifferent(oldIds, newIds));
+      if (isValid && areSchedulesDifferent(oldIds, newIds)) {
+        console.log('saving new schedule, length: ' + newIds.length);
+        scheduleService.addSchedule(newIds);
+        return true;
       }
       return false;
     });
 }
 
-function isScheduleDifferent(schedule1, schedule2) {
-  return _(schedule1).differenceWith(schedule2, _.isEqual).isEmpty();
+function areSchedulesDifferent(schedule1, schedule2) {
+  return !_.isEqual(schedule1.sort(), schedule2.sort());
 }
 
 function getCourseInfosForAllStudios() {
@@ -70,7 +74,6 @@ function getCourseInfoForAllDays(studioUrl) {
   return Promise.all(promises)
     .then(() => result);
 }
-
 
 
 function getCourseInfosForOneDay(url) {

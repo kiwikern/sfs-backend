@@ -15,7 +15,7 @@ exports.init = () => {
       }
     });
   });
-}
+};
 
 exports.drop = () => {
   return new Promise((resolve, reject) =>  {
@@ -24,7 +24,7 @@ exports.drop = () => {
         .then(() => resolve());
     });
   });
-}
+};
 
 function dropCollection(collection) {
   return new Promise((resolve, reject) => {

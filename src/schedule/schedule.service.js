@@ -26,7 +26,7 @@ exports.getLatestUpdateDate = () => {
 
 exports.getLatestSchedule = () => {
   return getLatestScheduleObject()
-    .then(res => (res && res.schedule) ? res.schedule : {});
+    .then(res => (res && res.schedule) ? res.schedule : []);
 };
 
 function getLatestScheduleObject() {

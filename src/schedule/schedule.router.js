@@ -1,17 +1,22 @@
 const router = require('koa-router')();
-const scheduleService = require('./schedule.service.js');
 const cron = require('node-cron');
+const scheduleService = require('./schedule.service.js');
+const workoutService = require('./workout.service');
 const scheduleParser = require('./schedule.parser.js');
+const notificationSender = require('../push/push.sender');
+
+let schedule = [];
 
 exports.routes = () => router.routes();
 
 exports.init = (promise) => {
   return promise
     .then(scheduleService.getLatestSchedule)
+    .then(ids => workoutService.getWorkouts(ids))
     .then(json => json ? schedule = json : json)
     .then(scheduleService.getLatestUpdateDate)
     .then(date => latestUpdateDate = date);
-}
+};
 
   router.get('/', ctx => {
     ctx.body = schedule;
@@ -32,6 +37,7 @@ exports.init = (promise) => {
     scheduleParser.parseCourses()
       .then(hasChanged => hasChanged ? notificationSender.sendPush() : false)
       .then(scheduleService.getLatestSchedule)
+      .then(ids => workoutService.getWorkouts(ids))
       .then(json => json ? schedule = json : json)
       .then(scheduleService.getLatestUpdateDate)
       .then(date => latestUpdateDate = date)
