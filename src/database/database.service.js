@@ -4,6 +4,7 @@ const url = `mongodb://${mongoSecrets.user}:${mongoSecrets.password}@localhost:$
 const pushService = require('../push/push.service.js');
 const scheduleService = require('../schedule/schedule.service.js');
 const workoutService = require('../schedule/workout.service.js');
+const changesService = require('../schedule/changes.service.js');
 const userService = require('../user/user.service.js');
 const syncService = require('../sync/sync.service.js');
 
@@ -18,6 +19,7 @@ exports.init = () => {
         pushService.init(db);
         scheduleService.init(db);
         workoutService.init(db);
+        changesService.init(db);
         userService.init(db);
         syncService.init(db);
         resolve();

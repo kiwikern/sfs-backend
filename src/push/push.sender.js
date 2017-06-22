@@ -24,7 +24,7 @@ function sendToAllSubscriptions(subscriptions) {
       title: 'Superfit Kursplan',
       icon: 'assets/favicons/android-chrome-192x192.png'
     }
-  }
+  };
   return subscriptions.forEach(subscription => {
     webpush.sendNotification(subscription, JSON.stringify(data))
       .then(success => console.log('notification sent.'))

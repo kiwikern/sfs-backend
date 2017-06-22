@@ -4,9 +4,9 @@ exports.init = (dbInstance) => {
   schedules = dbInstance.collection('schedules');
 };
 
-exports.addSchedule = (schedule) => {
+exports.addSchedule = schedule => {
   return new Promise((resolve, reject) => {
-    schedules.insert({
+    schedules.insertOne({
       schedule,
       insertDate: new Date()
     }, (err, result) => {
