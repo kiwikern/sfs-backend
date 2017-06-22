@@ -29,10 +29,14 @@ describe(`ScheduleParser`, () => {
       config: {studios: ['steglitz', 'europa'], days: ['mo', 'di'], baseUrl: '', types: ['']},
       scheduleService: {
         getLatestSchedule: () => Promise.resolve([]),
-        addSchedule: schedule => getResultFn(schedule)
+        addSchedule: schedule => {getResultFn(schedule); return Promise.resolve({insertedId: 0});}
       },
       workoutService: {
         addWorkouts: s => s
+      },
+      changesService: {
+        getRecentChanges: () => Promise.resolve(),
+        addChange: () => Promise.resolve()
       }
     };
   }
