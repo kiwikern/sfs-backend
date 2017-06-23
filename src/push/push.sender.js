@@ -29,6 +29,7 @@ function sendToAllSubscriptions(subscriptions) {
     webpush.sendNotification(subscription, JSON.stringify(data))
       .then(success => console.log('notification sent.'))
       .catch(error => {
+        console.log(error)
         pushService.deleteSubscription(subscription);
       });
   });
