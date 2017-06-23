@@ -85,7 +85,7 @@ describe(`UserLogin`, () => {
         if (user._id) {
           return user._id === 'correct' ? Promise.resolve({password: ''}) : Promise.resolve(null);
         } else {
-          if (user.$or[0].mailAddress === 'correct' || user.$or[1].userName === 'correct') {
+          if (user.$or[0].mailAddress === 'correct' || String(user.$or[1].userName) === '/correct/i') {
             return Promise.resolve({password: ''});
           } else {
             return Promise.resolve(null);
