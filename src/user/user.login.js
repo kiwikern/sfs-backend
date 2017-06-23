@@ -15,7 +15,7 @@ exports.login = (ctx) => {
     .then(user => checkPassword(user, userBody.password))
     .then(user => tokenGenerator.generateToken(user, ctx))
     .catch(error => handleError(error, ctx));
-}
+};
 
 function handleError(error, ctx) {
   switch(error.message) {
@@ -30,14 +30,14 @@ function handleError(error, ctx) {
       break;
     default:
       ctx.response.status = 500;
-    };
+    }
 }
 
 function getSearchCond(user) {
   if (user._id) {
     return {_id: user._id};
   }
-    const userName = user.userName ? user.userName.toLowerCase() : null;
+    const userName = user.userName ? new RegExp(user.userName, "i") : null;
     return {$or: [
       {mailAddress: user.mailAddress || 'NONE_GIVEN'},
       {userName}

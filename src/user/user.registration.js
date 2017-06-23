@@ -10,7 +10,7 @@ exports.register = (ctx) => {
     ctx.response.status = 400;
     return false;
   }
-  return userService.findUser({userName: userBody.userName.toLowerCase()})
+  return userService.findUser({userName: new RegExp(userBody.userName, "i")})
     .then(user => user ? Promise.reject(new Error('username_exists')) : null)
     .then(() => userService.findUser({mailAddress: userBody.mailAddress || 'n/a'}))
     .then(user => user ? Promise.reject(new Error('mailaddress_exists')) : null)
@@ -19,7 +19,7 @@ exports.register = (ctx) => {
     .then(result => userService.findUser({_id: result.insertedId}))
     .then(user => tokenGenerator.generateToken(user, ctx))
     .catch(error => handleError(error, ctx));
-}
+};
 
 function handleError(error, ctx) {
   switch(error.message) {
@@ -34,10 +34,11 @@ function handleError(error, ctx) {
       break;
     default:
       ctx.response.status = 500;
-    };
+    }
 }
 
 function createUser(user) {
+  console.log('create user: ' + user.userName);
   return hashPassword(user.password).then((password) => ({
     userName: user.userName,
     mailAddress: user.mailAddress,
