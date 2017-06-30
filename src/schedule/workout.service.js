@@ -22,14 +22,30 @@ exports.getWorkouts = workoutIds => {
 };
 
 function addSingleWorkout(workout) {
-  return findWorkout(workout)
+  const searchCondition = {
+    time: workout.time, course: workout.course, day: workout.day, studio: workout.studio
+  };
+  return findWorkout(searchCondition)
     .then(foundWorkout => {
       if (!foundWorkout) {
         return saveWorkout(workout);
       } else {
-        return foundWorkout._id;
+        return updateWorkout(foundWorkout._id, workout);
       }
     });
+}
+
+function updateWorkout(_id, workout) {
+  return new Promise((resolve, reject) => {
+    workouts.updateOne({_id}, {$set: workout}, (err, result) => {
+      if (err) {
+        console.log('could not update workout');
+        reject(err);
+      } else {
+        resolve(_id);
+      }
+    });
+  });
 }
 
 function findWorkout(workout) {

@@ -38,4 +38,4 @@ exports.findState = (state) => {
       }
     });
   })
-}
+};
