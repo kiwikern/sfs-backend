@@ -1,7 +1,7 @@
 const moment = require('moment');
 const google = require('googleapis');
 const calendar = google.calendar('v3');
-const credentials = require('./google-credentials.json');
+const credentials = require('../secrets.js').googleCredentials;
 const classMapping = require('../config').classMapping;
 const calendars = require('../config').calendars;
 
