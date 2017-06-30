@@ -1,7 +1,7 @@
 const rewire = require('rewire');
 const scheduleParser = rewire('../../../src/schedule/schedule.parser.js');
 
-describe(`ScheduleParser`, () => {
+xdescribe(`ScheduleParser`, () => {
   beforeEach(() => {
   });
 
@@ -49,19 +49,5 @@ describe(`ScheduleParser`, () => {
     };
   }
 
-  function getHTML() {
-    return `<html><div id="content">
-    <table width="100%" border="0" cellspacing="2" cellpadding="0">
-    <tr>
-    <td width="50%" align="center" valign="middle" bgcolor="#000000" class="kpcelltime">09:00 Uhr</td>
-    <td width="50%"><img src="/files/img/kursicons/bodyattack.jpg" width="100%"></td>
-    </tr>
-    </table><table width="100%" border="0" cellspacing="2" cellpadding="0">
-      <tr>
-        <td width="50%" align="center" valign="middle" bgcolor="#000000" class="kpcelltime">10:00 Uhr</td>
-        <td width="50%"><img src="/files/img/kursicons/bodypump.jpg" width="100%"></td>
-      </tr>
-    </table></html>`
-  }
 
 });
