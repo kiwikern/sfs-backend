@@ -16,7 +16,6 @@
     "debug": "node --inspect src/index.js"
   },
   "author": "Kim Kern <mail@kimkern.de>",
-  "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "googleapis": "^20.0.1",
@@ -37,5 +36,13 @@
     "jasmine": "^2.6.0",
     "rewire": "^2.5.2",
     "supertest": "^3.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kiwikern/sfs-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kiwikern/sfs-backend/issues"
+  },
+  "homepage": "https://github.com/kiwikern/sfs-backend#readme"
 }
