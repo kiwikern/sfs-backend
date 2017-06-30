@@ -22,7 +22,11 @@ function sendToAllSubscriptions(subscriptions) {
     notification: {
       body: 'Der Kursplan hat sich geändert.',
       title: 'Superfit Kursplan',
-      icon: 'assets/favicons/android-chrome-192x192.png'
+      icon: 'assets/favicons/android-chrome-192x192.png',
+      data: '/schedule/changes',
+      actions: [
+        {action: 'openpage', title: 'Änderungen anzeigen', icon: 'assets/ic_swap_horiz_black_24dp_2x.png'}
+      ]
     }
   };
   return subscriptions.forEach(subscription => {
