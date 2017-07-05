@@ -2,14 +2,17 @@ let bcrypt = require('bcryptjs');
 let userService = require('./user.service.js');
 let userSanitizer = require('./user.sanitizer.js');
 let tokenGenerator = require('./token.generator.js');
+const log = require('../logger/logger.instance').getLogger('UserLogin');
 
 exports.login = (ctx) => {
   const userBody = userSanitizer.getNormalizedUserIfValid(ctx.request.body);
   if (!userBody) {
     ctx.response.body = {key: 'invalid_request'};
     ctx.response.status = 400;
+    log.warn('got invalid request', userBody);
     return false;
   }
+  log.debug('login', {userName: userBody.userName, mailAddress: userBody.mailAddress});
   return userService.findUser(getSearchCond(userBody))
     .then(user => user ? user : Promise.reject(new Error('user_not_found')))
     .then(user => checkPassword(user, userBody.password))
@@ -27,6 +30,7 @@ function handleError(error, ctx) {
     case 'gen_token_failed':
       ctx.response.status = 500;
       ctx.response.body = {key: error.message};
+      log.error('could not generate token');
       break;
     default:
       ctx.response.status = 500;

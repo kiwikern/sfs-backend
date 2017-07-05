@@ -1,4 +1,5 @@
 const pushService = require('./push.service.js');
+const log = require('../logger/logger.instance').getLogger('PushSaver');
 
 exports.saveSubscription = (ctx) => {
   if (isValidSubscriptionRequest(ctx)) {
@@ -7,7 +8,7 @@ exports.saveSubscription = (ctx) => {
       .then(() => sendSuccessMessage(ctx))
       .catch((err) => sendErrorMessage(ctx));
   }
-}
+};
 
 function createSubscription(subscription) {
   return {
@@ -18,12 +19,13 @@ function createSubscription(subscription) {
       auth: subscription.keys.auth
     }
   }
-};
+}
 
 function isValidSubscriptionRequest(ctx) {
   if (!ctx.request.body.endpoint) {
+    log.warn('got invalid subscription request', ctx.request.body);
     ctx.response.status = 400;
-    let error = { key: 'no-endpoint' };
+    const error = {key: 'no-endpoint'};
     ctx.response.body = error;
     return false;
   } else {
@@ -32,18 +34,19 @@ function isValidSubscriptionRequest(ctx) {
 }
 
 function sendSuccessMessage(ctx) {
-  console.log('successfully added subscription');
+  log.debug('successfully added subscription');
   ctx.status = 200;
 }
 
 function sendErrorMessage(ctx) {
+  log.warn('could not save subscription', {body: ctx.request.body});
   const error = {
     error: {
       id: 'unable-to-save-subscription',
       message: 'The subscription was received but could not be stored.'
     }
   };
-  ctx.body = JSON.stringify(errorMessage);
+  ctx.body = JSON.stringify(error);
   ctx.status = 500;
 
 }

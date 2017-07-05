@@ -7,15 +7,16 @@ const workoutService = require('../schedule/workout.service.js');
 const changesService = require('../schedule/changes.service.js');
 const userService = require('../user/user.service.js');
 const syncService = require('../sync/sync.service.js');
+const log = require('../logger/logger.instance').getLogger('DatabaseService');
 
 exports.init = () => {
   return new Promise((resolve, reject) =>  {
     MongoClient.connect(url, (err, db) => {
       if (err) {
-        console.log(err);
+        log.error('could not connect to database', err);
         reject();
       } else {
-        console.log('DatabaseService: init finished');
+        log.info('init finished');
         pushService.init(db);
         scheduleService.init(db);
         workoutService.init(db);
@@ -26,4 +27,4 @@ exports.init = () => {
       }
     });
   });
-}
+};

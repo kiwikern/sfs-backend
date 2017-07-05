@@ -28,7 +28,7 @@ describe(`SyncSetter`, () => {
     expect(ctx.response.body.key).toBe('missing_state');
   });
 
-  it('should return 400 without state', () => {
+  it('should return 400 without lastupdate', () => {
     ctx.request.body.lastUpdate = null;
     syncSetter.postSyncStatus(ctx);
     expect(ctx.response.status).toBe(400);
@@ -79,13 +79,10 @@ describe(`SyncSetter`, () => {
   });
 
   it('should return 500 on database error', (done) => {
-    let logResult;
-    log = result => logResult = result;
-    syncSetter.__set__(getServiceErrorMock('error', log));
+    syncSetter.__set__(getServiceErrorMock('error'));
     syncSetter.postSyncStatus(ctx).then(() => {
       expect(ctx.response.status).toBe(500);
       expect(ctx.response.body).toBe(undefined);
-      expect(logResult).toBe('error');
       done();
     });
   });
@@ -113,13 +110,12 @@ describe(`SyncSetter`, () => {
     };
   }
 
-  function getServiceErrorMock(error, log) {
+  function getServiceErrorMock(error) {
     return {
       syncService: {
         findState: () => Promise.reject(error),
         addState: () => Promise.resolve()
-      },
-      console: {log}
+      }
     }
   }
 

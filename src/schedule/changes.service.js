@@ -1,3 +1,4 @@
+const log = require('../logger/logger.instance').getLogger('ChangesService');
 let changes = {};
 
 exports.init = (dbInstance) => {
@@ -17,6 +18,7 @@ exports.getRecentChanges = () => {
       .limit(3)
       .toArray((err, result) => {
         if (err) {
+          log.error('could not get recent changes', err);
           reject(err);
         } else {
           resolve(result);
@@ -29,7 +31,7 @@ function saveChange(change) {
   return new Promise((resolve, reject) => {
     changes.insertOne(change, (err, result) => {
       if (err) {
-        console.log('could not save change');
+        log.error('could not save change', err);
         reject(err);
       } else {
         resolve(result.insertedId);

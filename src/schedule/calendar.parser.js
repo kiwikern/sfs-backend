@@ -4,6 +4,7 @@ const calendar = google.calendar('v3');
 const credentials = require('../secrets.js').googleCredentials;
 const classMapping = require('../config').classMapping;
 const calendars = require('../config').calendars;
+const log = require('../logger/logger.instance').getLogger('CalendarParser', 'debug');
 
 exports.getWorkouts = () => {
   const jwtClient = getGoogleAuth();
@@ -11,16 +12,19 @@ exports.getWorkouts = () => {
   const promises = [];
   for (let i = 0; i < 7; i++) {
     const timeMin = moment().startOf('day').add(i, 'day').utc().format();
-    const timeMax = moment().startOf('day').add(i+1, 'day').utc().format();
+    const timeMax = moment().startOf('day').add(i + 1, 'day').utc().format();
     const promise = getWorkoutsForDay(jwtClient, timeMin, timeMax);
     promise.then(w => {
-      console.log(w.length + ' workouts found within range: ' + timeMin + ' - ' + timeMax);
+      log.debug(w.length + ' workouts found within range: ' + timeMin + ' - ' + timeMax);
       workouts = workouts.concat(w)
-    });
+    })
+      .catch(err => log.error('could not add workouts', err));
     promises.push(promise);
   }
-  return new Promise(resolve => {
-    Promise.all(promises).then(() => resolve(workouts));
+  return new Promise((resolve, reject) => {
+    Promise.all(promises)
+      .then(() => resolve(workouts))
+      .catch(err => reject(err));
   });
 };
 
@@ -36,10 +40,13 @@ function getWorkoutsForDay(jwtClient, timeMin, timeMax) {
         timeMax
       };
       const promise = getWorkoutsForStudio(options, cal.gym);
-      promise.then(studioWorkouts => workouts = workouts.concat(studioWorkouts));
+      promise.then(studioWorkouts => workouts = workouts.concat(studioWorkouts))
+        .catch(err => reject(err));
       promises.push(promise);
     }
-    Promise.all(promises).then(() => resolve(workouts));
+    Promise.all(promises)
+      .then(() => resolve(workouts))
+      .catch(err => reject(err));
   });
 }
 
@@ -52,7 +59,7 @@ function getGoogleAuth() {
 
   jwtClient.authorize(function (err, tokens) {
     if (err) {
-      console.log(err);
+      log.error('calendarp', '', err);
     }
   });
   return jwtClient;
@@ -62,13 +69,12 @@ function getWorkoutsForStudio(options, gym) {
   return new Promise((resolve, reject) => {
     calendar.events.list(options, function (err, response) {
       if (err) {
-        console.log('error for gym: ' + gym);
-        console.log('The API returned an error: ' + err);
-        return reject([]);
+        log.error('could not parse calendar', {gym, err});
+        return reject(err);
       }
       const events = response.items;
       if (events.length === 0) {
-        console.log('No events found for ' + gym);
+        log.warn('No events found for ' + gym);
         return resolve([]);
       } else {
         const workouts = [];
@@ -121,7 +127,7 @@ function getWorkoutId(event) {
   if (classMapping.hasOwnProperty(name)) {
     return classMapping[name];
   } else {
-    console.log('No mapping for: ' + name);
+    log.error('No mapping for: ' + name, event);
     return name;
   }
 }

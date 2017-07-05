@@ -1,3 +1,4 @@
+const log = require('../logger/logger.instance').getLogger('ScheduleService');
 let schedules = {};
 
 exports.init = (dbInstance) => {
@@ -11,6 +12,7 @@ exports.addSchedule = schedule => {
       insertDate: new Date()
     }, (err, result) => {
       if (err) {
+        log.error('could not add schedule', err);
         reject(err);
       } else {
         resolve(result);
@@ -37,7 +39,7 @@ function getLatestScheduleObject() {
       }
     }, (err, result) => {
       if (err) {
-        console.log(err);
+        log.error('could not get schedule from db', err);
         reject(err);
       } else {
         resolve(result);

@@ -1,5 +1,7 @@
 const config = module.exports = {};
 
+config.loglevel = 'debug';
+
 config.calendars = [
   {
     gym: 'berlin-charlottenburg',

@@ -1,4 +1,4 @@
-const validator = require('validator')
+const validator = require('validator');
 
 exports.getNormalizedUserIfValid = (user) => {
   if (!user) {
@@ -21,7 +21,7 @@ exports.getNormalizedUserIfValid = (user) => {
     return false;
   }
   return normalizeUser(user);
-}
+};
 
 function isInvalidUserName(userName) {
   return !userName || !validator.matches(userName.trim(), /^[\w\d]+$/i);

@@ -1,3 +1,4 @@
+const log = require('../logger/logger.instance').getLogger('WorkoutService');
 let workouts = {};
 
 exports.init = (dbInstance) => {
@@ -39,7 +40,7 @@ function updateWorkout(_id, workout) {
   return new Promise((resolve, reject) => {
     workouts.updateOne({_id}, {$set: workout}, (err, result) => {
       if (err) {
-        console.log('could not update workout');
+        log.error('could not update workout', err);
         reject(err);
       } else {
         resolve(_id);
@@ -52,7 +53,7 @@ function findWorkout(workout) {
   return new Promise((resolve, reject) => {
     workouts.findOne(workout, (err, result) => {
       if (err) {
-        console.log('could not find workout');
+        log.error('could not find workout', err);
         reject(err);
       } else {
         resolve(result);
@@ -65,7 +66,7 @@ function saveWorkout(workout) {
   return new Promise((resolve, reject) => {
     workouts.insertOne(workout, (err, result) => {
       if (err) {
-        console.log('could not save workout');
+        log.error('could not save workout', err);
         reject(err);
       } else {
         resolve(result.insertedId);

@@ -5,6 +5,7 @@ const workoutService = require('./workout.service');
 const changesService = require('./changes.service');
 const scheduleParser = require('./schedule.parser.js');
 const notificationSender = require('../push/push.sender');
+const log = require('../logger/logger.instance').getLogger('ScheduleRouter');
 
 let schedule = [];
 let latestUpdateDate = '';
@@ -36,7 +37,10 @@ router.get('/changes', ctx => {
   ctx.body = changes;
 });
 
-router.get('/reload', reload);
+router.get('/reload', ctx => {
+  reload();
+  ctx.body = 'reload done';
+});
 
 /**
  * Reload schedule every day at 4 am.
@@ -44,6 +48,7 @@ router.get('/reload', reload);
 cron.schedule('0 4 * * *', reload);
 
 function reload() {
+  log.info('reload startet');
   scheduleParser.parseCourses()
     .then(hasChanged => hasChanged ? notificationSender.sendPush() : false)
     .then(scheduleService.getLatestSchedule)
@@ -54,7 +59,8 @@ function reload() {
     .then(changesService.getRecentChanges)
     .then(changes => loadChangesWorkouts(changes))
     .then(c => changes = c)
-    .then(() => console.log('reload done.'));
+    .then(() => log.info('reload done.'))
+    .catch(() => log.error('could not reload schedule.'));
 }
 
 function loadChangesWorkouts(changes) {

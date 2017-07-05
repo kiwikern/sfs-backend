@@ -1,8 +1,10 @@
 let syncService = require('./sync.service.js');
 let _ = require('lodash');
+const log = require('../logger/logger.instance').getLogger('SyncSetter');
 
 exports.postSyncStatus = (ctx) => {
   if (!isValidRequest(ctx)) {
+    log.warn('got invalid sync request', ctx.request.body);
     return false;
   }
   const userid = ctx.state.user.id;
@@ -24,7 +26,7 @@ exports.postSyncStatus = (ctx) => {
       }
     })
     .catch(error => {
-      console.log(error);
+      log.error('could not save sync status' + error);
       ctx.response.status = 500;
     });
 };

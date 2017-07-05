@@ -2,12 +2,14 @@ const bcrypt = require('bcryptjs');
 const userService = require('./user.service.js');
 const userSanitizer = require('./user.sanitizer.js');
 const tokenGenerator = require('./token.generator.js');
+const log = require('../logger/logger.instance').getLogger('UserRegistration');
 
 exports.register = (ctx) => {
   const userBody = userSanitizer.getNormalizedUserIfValid(ctx.request.body);
   if (!userBody || !userBody.userName) {
     ctx.response.body = {key: 'invalid_request'};
     ctx.response.status = 400;
+    log.warn('got invalid request', userBody);
     return false;
   }
   return userService.findUser({userName: new RegExp(userBody.userName, "i")})
@@ -29,6 +31,7 @@ function handleError(error, ctx) {
       ctx.response.body = {key: error.message};
       break;
     case 'gen_token_failed':
+      log.error('could not get token');
       ctx.response.status = 500;
       ctx.response.body = {key: error.message};
       break;
@@ -38,7 +41,7 @@ function handleError(error, ctx) {
 }
 
 function createUser(user) {
-  console.log('create user: ' + user.userName);
+  log.info('create user: ', user.userName);
   return hashPassword(user.password).then((password) => ({
     userName: user.userName,
     mailAddress: user.mailAddress,
@@ -52,6 +55,7 @@ function hashPassword(password) {
       if (!err) {
         return resolve(hash);
       } else {
+        log.error('could not hash password', err);
         return reject(err);
       }
     });

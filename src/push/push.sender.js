@@ -1,6 +1,7 @@
 const vapidKeys = require('../secrets.js').vapidKeys;
 const webpush = require('web-push');
 const pushService = require('./push.service.js');
+const log = require('../logger/logger.instance').getLogger('PushSender');
 
 exports.init = () => {
   webpush.setVapidDetails(
@@ -8,7 +9,7 @@ exports.init = () => {
     vapidKeys.publicKey,
     vapidKeys.privateKey
   );
-  console.log('PushNotificationSender: init finished');
+  log.info('init finished');
 };
 
 exports.sendPush = () => {
@@ -17,7 +18,7 @@ exports.sendPush = () => {
 };
 
 function sendToAllSubscriptions(subscriptions) {
-  console.log(subscriptions.length);
+  log.info('sending notifications to ' + subscriptions.length + 'clients');
   const data = {
     notification: {
       body: 'Der Kursplan hat sich geändert.',
@@ -31,9 +32,9 @@ function sendToAllSubscriptions(subscriptions) {
   };
   return subscriptions.forEach(subscription => {
     webpush.sendNotification(subscription, JSON.stringify(data))
-      .then(success => console.log('notification sent.'))
+      .then(success => log.debug('notification sent.'))
       .catch(error => {
-        console.log(error)
+        log.debug('deleting subscription', error);
         pushService.deleteSubscription(subscription);
       });
   });

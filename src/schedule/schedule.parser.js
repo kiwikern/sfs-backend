@@ -3,6 +3,7 @@ let scheduleService = require('./schedule.service.js');
 let workoutService = require('./workout.service.js');
 let changesService = require('./changes.service.js');
 let calendarParser = require('./calendar.parser');
+const log = require('../logger/logger.instance').getLogger('ScheduleParser');
 
 /**
  * Returns true, if parsed schedule differs from previously
@@ -11,7 +12,8 @@ let calendarParser = require('./calendar.parser');
 exports.parseCourses = () => {
   return calendarParser.getWorkouts()
     .then(json => workoutService.addWorkouts(json))
-    .then(ids => persist(ids));
+    .then(ids => persist(ids))
+    .catch(err => log.error('could not load new schedule'));
 };
 
 function persist(newIds) {
@@ -19,9 +21,9 @@ function persist(newIds) {
     .then(oldIds => {
       return new Promise(resolve => {
         const isValid = newIds && newIds.length > 0;
-        console.log('schedules are different: ' + areSchedulesDifferent(oldIds, newIds));
+        log.info('schedules are different: ' + areSchedulesDifferent(oldIds, newIds));
         if (isValid && areSchedulesDifferent(oldIds, newIds)) {
-          console.log('saving new schedule, length: ' + newIds.length);
+          log.info('saving new schedule, length: ' + newIds.length);
           scheduleService.addSchedule(newIds)
             .then(result => {
               saveChanges(result.insertedId, oldIds, newIds)

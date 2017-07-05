@@ -36,14 +36,11 @@ describe(`SyncGetter`, () => {
   });
 
   it('should return 500 on database error', (done) => {
-    let logResult;
-    const log = result => logResult = result;
-    syncGetter.__set__(getServiceErrorMock('error', log));
+    syncGetter.__set__(getServiceErrorMock('error'));
     ctx.state.user = {id: 100};
     syncGetter.getSyncStatus(ctx).then(() => {
       expect(ctx.response.status).toBe(500);
       expect(ctx.response.body).toBe(undefined);
-      expect(logResult).toBe('error');
       done();
     });
   });
@@ -54,10 +51,9 @@ describe(`SyncGetter`, () => {
     };
   }
 
-  function getServiceErrorMock(error, log) {
+  function getServiceErrorMock(error) {
     return {
       syncService: {findState: () => Promise.reject(error)},
-      console: {log}
     };
   }
 
