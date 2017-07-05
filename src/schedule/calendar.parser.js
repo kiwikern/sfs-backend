@@ -114,7 +114,7 @@ function getType(event) {
 }
 
 function getWorkoutId(event) {
-  let name = event.summary;
+  let name = event.summary.trim().toLowerCase();
   if (isTeamTraining(event)) {
     name = name.slice(13);
   }
