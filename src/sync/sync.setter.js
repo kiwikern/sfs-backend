@@ -13,16 +13,14 @@ exports.postSyncStatus = (ctx) => {
       if (state && state.lastUpdate !== ctx.request.body.lastUpdate) {
         ctx.response.body = {key: 'sync_conflict'};
         ctx.response.status = 409;
-        return;
       } else {
-        const requestState= ctx.request.body.state;
+        const requestState = ctx.request.body.state;
         if (state && state.state && _.isEqual(state.state, requestState)) {
           ctx.response.body = {lastUpdate: state.lastUpdate};
           ctx.response.status = 200;
         } else {
           return saveSyncState(ctx);
         }
-        return;
       }
     })
     .catch(error => {
@@ -59,12 +57,18 @@ function isValidRequest(ctx) {
 
 function saveSyncState(ctx) {
   const userid = ctx.state.user.id;
-  const state = ctx.request.body.state;
+  const body = ctx.request.body;
+  const state = body.state;
   const newState = {userid, state, lastUpdate: Date.now()};
-  return syncService.addState(newState)
-    .then(() => syncService.findState({userid}))
-    .then(state => {
-      ctx.response.status = 200;
-      ctx.response.body = {lastUpdate: state.lastUpdate};
-    });
+  if (body.userId && body.userId !== userid) {
+    ctx.response.body = {key: 'wrong_userid'};
+    ctx.response.status = 409;
+  } else {
+    return syncService.addState(newState)
+      .then(() => syncService.findState({userid}))
+      .then(state => {
+        ctx.response.status = 200;
+        ctx.response.body = {lastUpdate: state.lastUpdate};
+      });
+  }
 }
