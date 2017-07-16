@@ -35,10 +35,14 @@ exports.resetPassword = ctx => {
 
 exports.getResetToken = ctx => {
   log.debug('request password reset mail', ctx.request.body);
-  return captchaVerifier.verify(ctx.request.body.captcha)
-    .then(() => userService.findUserByNameMailOrId(ctx.request.body))
-    .then(user => user ? user : Promise.reject(new Error('user_not_found')))
-    .then(user => ({token: tokenGenerator.generateToken(user, resetPasswordSubject, '1h'), mailAddress: user.mailAddress}))
+  let user;
+  return userService.findUserByNameMailOrId(ctx.request.body)
+    .then(result => result ? user = result : Promise.reject(new Error('user_not_found')))
+    .then(() => captchaVerifier.verify(ctx.request.body.captcha))
+    .then(() => ({
+      token: tokenGenerator.generateToken(user, resetPasswordSubject, '1h'),
+      mailAddress: user.mailAddress
+    }))
     .then(result => sendTokenViaMail(result.token, result.mailAddress))
     .then(() => ctx.response.body = 'Mail was successfully sent')
     .catch(error => handleError(error, ctx));
