@@ -34,7 +34,7 @@ function getMailOptions(recipient, token) {
     subject: 'Dein SFS-Passwort zurücksetzen',
     text: `Setze dein Passwort zurück, indem du auf den folgenden Link klickst.
     Der Link ist 60 Minuten gültig.
-    https://sfs.kimkern.de/auth/reset-password?token=${token}`,
+    https://sfs.kimkern.de/auth/change-password?token=${token}`,
     html: `
     <p>
       Setze dein Passwort zurück, indem du auf den folgenden Link klickst.
