@@ -12,3 +12,11 @@ exports.jwt = {};
 exports.jwt.privateKey = 'TESTKEY';
 
 exports.googleCredentials = {};
+
+exports.mailAccount = {
+  server: 'server',
+  user: 'user',
+  password: 'pw'
+};
+
+exports.captcha = 'reCAPTCHA secret';

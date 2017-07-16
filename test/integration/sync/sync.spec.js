@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../../../src/index.js');
+const appHelper = require('../app.helper');
 const dbHelper = require('../db.helper.js');
 const userHelper = require('../user/user.helper.js');
 const syncHelper = require('./sync.helper.js');
@@ -7,7 +7,8 @@ const syncHelper = require('./sync.helper.js');
 describe('Sync', () => {
   beforeAll((done) => {
     let agent;
-    app.init.then(() => agent = request.agent(app.listen()))
+    appHelper.init()
+      .then(() => agent = request.agent(appHelper.listen()))
       .then(() => dbHelper.init())
       .then(() => userHelper.init(agent))
       .then(() => syncHelper.init(agent))

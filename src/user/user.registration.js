@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 const userService = require('./user.service.js');
 const userSanitizer = require('./user.sanitizer.js');
 const tokenGenerator = require('./token.generator.js');
@@ -19,7 +18,11 @@ exports.register = (ctx) => {
     .then(() => createUser(userBody))
     .then(user => userService.addUser(user))
     .then(result => userService.findUser({_id: result.insertedId}))
-    .then(user => tokenGenerator.generateToken(user, ctx))
+    .then(user => {
+      const token = tokenGenerator.generateToken(user, ctx);
+      ctx.response.body = {token, userName: user.userName};
+      ctx.response.status = 201;
+    })
     .catch(error => handleError(error, ctx));
 };
 
@@ -42,22 +45,9 @@ function handleError(error, ctx) {
 
 function createUser(user) {
   log.info('create user: ', user.userName);
-  return hashPassword(user.password).then((password) => ({
+  return userSanitizer.hashPassword(user.password).then((password) => ({
     userName: user.userName,
     mailAddress: user.mailAddress,
     password: password
   }));
-}
-
-function hashPassword(password) {
-  return new Promise((resolve, reject) => {
-    bcrypt.hash(password, 10, (err, hash) => {
-      if (!err) {
-        return resolve(hash);
-      } else {
-        log.error('could not hash password', err);
-        return reject(err);
-      }
-    });
-  });
 }

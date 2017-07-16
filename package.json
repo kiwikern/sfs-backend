@@ -1,6 +1,6 @@
 {
   "name": "sfschedule",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "schedule for superfit classes",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,7 @@
     "test": "npm run test:ci || echo true",
     "posttest": "del src\\secrets.js && move src\\_secrets.js src\\secrets.js",
     "int:test": "npm run jasmine -- --config=test/integration/integration.jasmine.json",
+    "int:watch": "nodemon --exec npm run int:test",
     "unit:test": "npm run jasmine -- --config=test/unit/unit.jasmine.json",
     "unit:watch": "nodemon --exec npm run unit:test",
     "test:ci": "npm run unit:test && npm run int:test",
@@ -26,9 +27,12 @@
     "koa-jwt": "^2.2.4",
     "koa-router": "^6",
     "lodash": "^4.17.4",
+    "mockery": "^2.1.0",
     "moment": "^2.18.1",
     "mongodb": "^2.2.26",
     "node-cron": "^1.1.3",
+    "nodemailer": "^4.0.1",
+    "request": "^2.81.0",
     "validator": "^7.0.0",
     "web-push": "^3.2.2",
     "winston": "^2.3.1"

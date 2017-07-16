@@ -1,12 +1,13 @@
 const request = require('supertest');
-const app = require('../../../src/index.js');
-const dbHelper = require('../db.helper.js');
-let userHelper = require('./user.helper.js');
+const appHelper = require('../app.helper');
+const dbHelper = require('../db.helper');
+let userHelper = require('./user.helper');
 
 describe('User registration and login', () => {
   beforeAll((done) => {
     let agent;
-    app.init.then(() => agent = request.agent(app.listen()))
+    appHelper.init()
+      .then(() => agent = request.agent(appHelper.listen()))
       .then(() => dbHelper.init())
       .then(() => userHelper.init(agent))
       .then(() => done());
@@ -51,7 +52,7 @@ describe('User registration and login', () => {
     userHelper.register(user)
       .then(() => userHelper.login(user))
       .then(response => {
-        expect(response.status).toBe(201);
+        expect(response.status).toBe(200);
         expect(response.body.userName).toBe(user.userName);
         expect(response.body.token).not.toBe(null);
         done();
@@ -66,5 +67,31 @@ describe('User registration and login', () => {
         done();
       });
   });
+
+  it('should reset password', (done) => {
+    const newPassword = '456123';
+    const newUser = {userName: 'test', password: newPassword};
+    userHelper.register(user)
+      .then(() => userHelper.login(newUser))
+      .then(response => {
+        expect(response.status).toBe(401);
+        expect(response.body.key).toBe('wrong_password');
+      })
+      .then(() => userHelper.requestPasswordReset(user))
+      .then(response => {
+        expect(response.status).toBe(200);
+        expect(appHelper.getLastResetPasswordToken()).not.toBeNull();
+      })
+      .then(() => userHelper.resetPassword(appHelper.getLastResetPasswordToken(), newPassword))
+      .then(response => {
+        expect(response.status).toBe(200);
+        expect(response.body.token).not.toBeNull();
+      })
+      .then(() => userHelper.login(newUser))
+      .then(response => {
+        expect(response.status).toBe(200);
+        done();
+      })
+  })
 
 });

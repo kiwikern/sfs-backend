@@ -13,10 +13,14 @@ exports.login = (ctx) => {
     return false;
   }
   log.debug('login', {userName: userBody.userName, mailAddress: userBody.mailAddress});
-  return userService.findUser(getSearchCond(userBody))
+  return userService.findUserByNameMailOrId(userBody)
     .then(user => user ? user : Promise.reject(new Error('user_not_found')))
     .then(user => checkPassword(user, userBody.password))
-    .then(user => tokenGenerator.generateToken(user, ctx))
+    .then(user => {
+      const token = tokenGenerator.generateToken(user, ctx);
+      ctx.response.body = {token, userName: user.userName};
+      ctx.response.status = 200;
+    })
     .catch(error => handleError(error, ctx));
 };
 
@@ -35,17 +39,6 @@ function handleError(error, ctx) {
     default:
       ctx.response.status = 500;
     }
-}
-
-function getSearchCond(user) {
-  if (user._id) {
-    return {_id: user._id};
-  }
-    const userName = user.userName ? new RegExp(user.userName, "i") : null;
-    return {$or: [
-      {mailAddress: user.mailAddress || 'NONE_GIVEN'},
-      {userName}
-    ]};
 }
 
 function checkPassword(user, requestPassword) {

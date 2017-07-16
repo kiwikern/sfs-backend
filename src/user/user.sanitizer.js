@@ -1,4 +1,6 @@
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
+const log = require('../logger/logger.instance').getLogger('UserSanitizer');
 
 exports.getNormalizedUserIfValid = (user) => {
   if (!user) {
@@ -17,11 +19,26 @@ exports.getNormalizedUserIfValid = (user) => {
       return false;
     }
   }
-  if (!user.password || user.password.length < 6) {
+  if (isInvalidPassword(user)) {
     return false;
   }
   return normalizeUser(user);
 };
+
+exports.hashPassword = password => {
+  return new Promise((resolve, reject) => {
+    bcrypt.hash(password, 10, (err, hash) => {
+      if (!err) {
+        return resolve(hash);
+      } else {
+        log.error('could not hash password', err);
+        return reject(err);
+      }
+    });
+  });
+};
+
+exports.isInvalidPassword = isInvalidPassword;
 
 function isInvalidUserName(userName) {
   return !userName || !validator.matches(userName.trim(), /^[\w\d]+$/i);
@@ -29,6 +46,10 @@ function isInvalidUserName(userName) {
 
 function isInvalidMailAddress(mail) {
   return !mail || !validator.isEmail(mail);
+}
+
+function isInvalidPassword(user) {
+  return !user.password || user.password.length < 6;
 }
 
 function normalizeUser(user) {
