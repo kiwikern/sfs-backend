@@ -41,7 +41,7 @@ function getMailOptions(recipient, token) {
       Der Link ist 60 Minuten gültig.
     </p>
     <p>
-      <a href="https://sfs.kimkern.de/auth/reset-password?token=${token}">Passwort zurücksetzen</a>
+      <a href="https://sfs.kimkern.de/auth/change-password?token=${token}">Passwort zurücksetzen</a>
     </p>`
   };
 }
