@@ -4,6 +4,7 @@ const userRouter = require('./user/user.router.js');
 const scheduleRouter = require('./schedule/schedule.router.js');
 const syncRouter = require('./sync/sync.router.js');
 const pushRouter = require('./push/push.router.js');
+const feedbackRouter = require('./feedback/feedback.router');
 const koa = require('koa');
 const bodyParser = require('koa-json-body');
 const app = new koa();
@@ -16,6 +17,7 @@ router.use('/user', userRouter.routes());
 router.use('/schedule', scheduleRouter.routes());
 router.use('/sync', syncRouter.routes());
 router.use('/subscription', pushRouter.routes());
+router.use('/feedback', feedbackRouter.routes());
 
 app.listen(3000);
 

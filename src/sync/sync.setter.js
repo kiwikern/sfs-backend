@@ -24,7 +24,7 @@ exports.postSyncStatus = (ctx) => {
       }
     })
     .catch(error => {
-      log.error('could not save sync status' + error);
+      log.error('could not save sync status', error);
       ctx.response.status = 500;
     });
 };

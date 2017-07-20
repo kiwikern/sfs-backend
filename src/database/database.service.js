@@ -7,6 +7,7 @@ const workoutService = require('../schedule/workout.service.js');
 const changesService = require('../schedule/changes.service.js');
 const userService = require('../user/user.service.js');
 const syncService = require('../sync/sync.service.js');
+const feedbackService = require('../feedback/feedback.service');
 const log = require('../logger/logger.instance').getLogger('DatabaseService');
 
 exports.init = () => {
@@ -23,6 +24,7 @@ exports.init = () => {
         changesService.init(db);
         userService.init(db);
         syncService.init(db);
+        feedbackService.init(db);
         resolve();
       }
     });
