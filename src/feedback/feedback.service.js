@@ -19,6 +19,19 @@ exports.addFeedback = (feedback) => {
   });
 };
 
+exports.addResponse = (feedbackId, response) => {
+  return new Promise((resolve, reject) => {
+    collection.updateOne({_id: new ObjectID(feedbackId)}, {$push: {"feedback.responses": response}}, (err, result) => {
+      if (err) {
+        log.error('could not add response', err);
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 exports.updateFeedback = (feedbackId, updateValues) => {
   return new Promise((resolve, reject) => {
     collection.updateOne({_id: new ObjectID(feedbackId)}, {$set: updateValues}, (err, result) => {
