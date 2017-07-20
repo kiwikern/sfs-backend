@@ -25,8 +25,7 @@ function isValidSubscriptionRequest(ctx) {
   if (!ctx.request.body.endpoint) {
     log.warn('got invalid subscription request', ctx.request.body);
     ctx.response.status = 400;
-    const error = {key: 'no-endpoint'};
-    ctx.response.body = error;
+    ctx.response.body = {key: 'no-endpoint'};
     return false;
   } else {
     return true;
@@ -34,7 +33,7 @@ function isValidSubscriptionRequest(ctx) {
 }
 
 function sendSuccessMessage(ctx) {
-  log.debug('successfully added subscription');
+  log.silly('successfully added subscription');
   ctx.status = 200;
 }
 
