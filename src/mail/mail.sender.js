@@ -12,9 +12,9 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-exports.sendMail = (recipient, token) => {
-  log.debug('sending mail', recipient);
-  const mailOptions = getMailOptions(recipient, token);
+exports.sendMail = (mailOptions) => {
+  log.debug('sending mail', mailOptions.recipient);
+  mailOptions.from = `"SFS" <${mailSecret.user}>`;
   return new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, error => {
       if (error) {
@@ -26,23 +26,3 @@ exports.sendMail = (recipient, token) => {
     });
   });
 };
-
-function getMailOptions(recipient, token) {
-  return {
-    from: `"SFS" <${mailSecret.user}>`,
-    to: recipient,
-    subject: 'Dein SFS-Passwort zurücksetzen',
-    text: `Setze dein Passwort zurück, indem du auf den folgenden Link klickst.
-    Der Link ist 60 Minuten gültig.
-    https://sfs.kimkern.de/auth/change-password?token=${token}`,
-    html: `
-    <p>
-      Setze dein Passwort zurück, indem du auf den folgenden Link klickst.
-      Der Link ist 60 Minuten gültig.
-    </p>
-    <p>
-      <a href="https://sfs.kimkern.de/auth/change-password?token=${token}">Passwort zurücksetzen</a>
-    </p>`
-  };
-}
-

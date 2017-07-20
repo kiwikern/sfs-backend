@@ -1,7 +1,7 @@
 let userService = require('./user.service');
 let userSanitizer = require('./user.sanitizer');
 let tokenGenerator = require('./token.generator');
-let mailSender = require('../mail/mail.sender');
+let passwordSender = require('./password.mailsender');
 const captchaVerifier = require('../captcha/captcha.verifier');
 const log = require('../logger/logger.instance').getLogger('PasswordResetter');
 
@@ -43,14 +43,10 @@ exports.getResetToken = ctx => {
       token: tokenGenerator.generateToken(user, resetPasswordSubject, '1h'),
       mailAddress: user.mailAddress
     }))
-    .then(result => sendTokenViaMail(result.token, result.mailAddress))
+    .then(result => passwordSender.sendPasswordMail(result.mailAddress, result.token))
     .then(() => ctx.response.body = 'Mail was successfully sent')
     .catch(error => handleError(error, ctx));
 };
-
-function sendTokenViaMail(token, mailAddress) {
-  return mailSender.sendMail(mailAddress, token);
-}
 
 function handleError(error, ctx) {
   switch (error.message) {
