@@ -1,4 +1,5 @@
 let feedbackService = require('./feedback.service');
+let feedbackMailSender = require('./feedback.mailsender');
 const log = require('../logger/logger.instance').getLogger('FeedbackSetter');
 
 exports.saveFeedback = (ctx) => {
@@ -11,7 +12,9 @@ exports.saveFeedback = (ctx) => {
   feedback.date = Date.now();
   feedback.responses = [];
   const userId = ctx.request.body.userId;
+  const userName = ctx.request.body.userName;
   const version = ctx.request.body.version;
+  feedbackMailSender.sendFeedbackMail({userId, userName, version, feedback});
   return feedbackService.addFeedback({userId, version, feedback})
     .then(() => ctx.response.status = 200)
     .catch(error => {
