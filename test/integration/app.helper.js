@@ -5,8 +5,8 @@ mockery.enable({
   warnOnUnregistered: false
 });
 
-mockery.registerMock('../mail/mail.sender', {
-  sendMail: (recipient, token) => {
+mockery.registerMock('./password.mailsender', {
+  sendPasswordMail: (recipient, token) => {
     lastToken = token;
     return Promise.resolve()
   }
