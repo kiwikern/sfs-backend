@@ -23,7 +23,7 @@ exports.resetPassword = ctx => {
       .then(() => userService.findUserByNameMailOrId({_id: userId}))
       .then(user => {
         const token = tokenGenerator.generateToken(user, ctx);
-        ctx.response.body = {token, userName: user.userName};
+        ctx.response.body = {token, userName: user.userName, userId: user.userId};
         ctx.response.status = 200;
       })
       .catch(error => handleError(error, ctx));
