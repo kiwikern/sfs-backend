@@ -11,9 +11,9 @@ exports.saveResponse = ctx => {
     text: response.text,
     userId: response.userId,
     date: new Date(),
-    isRead: false
+    isRead: response.userId !== 'sfs'
   };
-  return feedbackService.addResponse(response.responseTo, dbResponse)
+  return feedbackService.addResponse(response.feedbackId, dbResponse)
     .then(() => ctx.response.status = 200)
     .catch(error => {
       log.error('could not save response', error);
@@ -28,7 +28,7 @@ function isValidRequest(ctx) {
     ctx.response.status = 400;
     return false
   }
-  if (!body.responseTo) {
+  if (!body.feedbackId) {
     ctx.response.body = {key: 'missing_feedbackId'};
     ctx.response.status = 400;
     return false;

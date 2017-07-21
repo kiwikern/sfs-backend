@@ -9,7 +9,7 @@ exports.saveFeedback = (ctx) => {
   }
   log.debug('save feedback', ctx.request.body);
   const feedback = ctx.request.body.feedback;
-  feedback.date = Date.now();
+  feedback.date = new Date();
   feedback.responses = [];
   const userId = ctx.request.body.userId;
   const userName = ctx.request.body.userName;
