@@ -47,7 +47,7 @@ exports.updateFeedback = (feedbackId, updateValues) => {
 
 exports.findFeedbackList = userId => {
   return new Promise((resolve, reject) => {
-    collection.find({userId}, (err, result) => {
+    collection.find({userId}, {sort: {"feedback.date": -1}}, (err, result) => {
       if (err) {
         log.error('could not find feedback', err);
         reject(err);
@@ -57,3 +57,47 @@ exports.findFeedbackList = userId => {
     });
   })
 };
+
+exports.markRead = feedbackId => {
+  return findFeedbackById(feedbackId)
+    .then(result => {
+      if (result && result.feedback && Array.isArray(result.feedback.responses)) {
+        const responses = result.feedback.responses.map(r => {
+          if (r) {
+            r.isRead = true;
+          }
+          return r;
+        });
+        return updateResponses(feedbackId, responses)
+      } else {
+        log.warn('no feedback found to mark read', feedbackId);
+        return true;
+      }
+    });
+};
+
+function findFeedbackById(feedbackId) {
+  return new Promise((resolve, reject) => {
+    collection.findOne({_id: new ObjectID(feedbackId)}, (err, result) => {
+      if (err) {
+        log.error('could not find feedback', err);
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
+function updateResponses(feedbackId, responses) {
+  return new Promise((resolve, reject) => {
+    collection.updateOne({_id: new ObjectID(feedbackId)}, {$set: {"feedback.responses": responses}}, (err, result) => {
+      if (err) {
+        log.error('could not update responses', err);
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
