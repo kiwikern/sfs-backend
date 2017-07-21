@@ -18,7 +18,7 @@ exports.login = (ctx) => {
     .then(user => checkPassword(user, userBody.password))
     .then(user => {
       const token = tokenGenerator.generateToken(user, ctx);
-      ctx.response.body = {token, userName: user.userName};
+      ctx.response.body = {token, userName: user.userName, userId: user._id};
       ctx.response.status = 200;
     })
     .catch(error => handleError(error, ctx));

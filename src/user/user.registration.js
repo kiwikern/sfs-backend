@@ -20,7 +20,7 @@ exports.register = (ctx) => {
     .then(result => userService.findUser({_id: result.insertedId}))
     .then(user => {
       const token = tokenGenerator.generateToken(user, ctx);
-      ctx.response.body = {token, userName: user.userName};
+      ctx.response.body = {token, userName: user.userName, userId: user._id};
       ctx.response.status = 201;
     })
     .catch(error => handleError(error, ctx));
