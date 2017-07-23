@@ -34,6 +34,10 @@ exports.deleteUser = (searchCond) => {
 
 exports.updateUser = (userId, updateValues) => {
   return new Promise((resolve, reject) => {
+    if (user._id && !ObjectID.isValid(user._id)) {
+      log.warn('userId is invalid', user._id);
+      return reject('userId is invalid' + user._id);
+    }
     collection.updateOne({_id: new ObjectID(userId)}, {$set: updateValues}, (err, result) => {
       if (err) {
         log.error('could not update user', err);
@@ -50,7 +54,7 @@ exports.findUser = searchCond => findUser(searchCond);
 exports.findUserByNameMailOrId = user => findUser(getSearchCondition(user));
 
 function getSearchCondition(user) {
-  if (user._id) {
+  if (user._id && ObjectID.isValid(user._id)) {
     return {_id: new ObjectID(user._id)};
   }
   const userName = user.userName ? new RegExp(user.userName, "i") : null;
