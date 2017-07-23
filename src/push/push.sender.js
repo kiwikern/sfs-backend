@@ -30,12 +30,12 @@ function sendToAllSubscriptions(subscriptions) {
       ]
     }
   };
-  return subscriptions.forEach(subscription => {
-    webpush.sendNotification(subscription, JSON.stringify(data))
+  return subscriptions.forEach(subscriptionData => {
+    webpush.sendNotification(subscriptionData.subscription, JSON.stringify(data))
       .then(success => log.debug('notification sent.'))
       .catch(error => {
         log.debug('deleting subscription', error);
-        pushService.deleteSubscription(subscription);
+        pushService.deleteSubscription(subscriptionData._id);
       });
   });
 }

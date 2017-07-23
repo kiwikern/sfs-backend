@@ -3,8 +3,9 @@ const log = require('../logger/logger.instance').getLogger('PushSaver');
 
 exports.saveSubscription = (ctx) => {
   if (isValidSubscriptionRequest(ctx)) {
-    const subscription = createSubscription(ctx.request.body);
-    return pushService.addSubscription(subscription)
+    const body = ctx.request.body;
+    const subscription = createSubscription(body.subscription);
+    return pushService.addSubscription({subscription, userId: body.userId})
       .then(() => sendSuccessMessage(ctx))
       .catch((err) => sendErrorMessage(ctx));
   }
@@ -22,7 +23,7 @@ function createSubscription(subscription) {
 }
 
 function isValidSubscriptionRequest(ctx) {
-  if (!ctx.request.body.endpoint) {
+  if (!ctx.request.body.subscription || !ctx.request.body.subscription.endpoint) {
     log.warn('got invalid subscription request', ctx.request.body);
     ctx.response.status = 400;
     ctx.response.body = {key: 'no-endpoint'};
