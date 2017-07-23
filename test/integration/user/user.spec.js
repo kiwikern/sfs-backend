@@ -74,17 +74,17 @@ describe('User registration and login', () => {
     userHelper.register(user)
       .then(() => userHelper.login(newUser))
       .then(response => {
-        expect(response.status).toBe(401);
+        expect(response.status).toBe(401, "because password is wrong");
         expect(response.body.key).toBe('wrong_password');
       })
       .then(() => userHelper.requestPasswordReset(user))
       .then(response => {
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(200, "because reset pw mail request succeeded");
         expect(appHelper.getLastResetPasswordToken()).not.toBeNull();
       })
       .then(() => userHelper.resetPassword(appHelper.getLastResetPasswordToken(), newPassword))
       .then(response => {
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(200, "because reset pw succeeded");
         expect(response.body.token).not.toBeNull();
       })
       .then(() => userHelper.login(newUser))

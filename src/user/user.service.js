@@ -36,9 +36,9 @@ exports.deleteUser = (searchCond) => {
 
 exports.updateUser = (userId, updateValues) => {
   return new Promise((resolve, reject) => {
-    if (user._id && !ObjectID.isValid(user._id)) {
-      log.warn('userId is invalid', user._id);
-      return reject('userId is invalid' + user._id);
+    if (userId && !ObjectID.isValid(userId)) {
+      log.warn('userId is invalid', userId);
+      return reject('userId is invalid' + userId);
     }
     collection.updateOne({_id: new ObjectID(userId)}, {$set: updateValues}, (err, result) => {
       if (err) {
