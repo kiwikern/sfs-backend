@@ -3,13 +3,15 @@ const appHelper = require('../app.helper');
 const dbHelper = require('../db.helper.js');
 const pushHelper = require('./push.helper.js');
 
-describe('Sync', () => {
-  const subscription = {
-    endpoint: 'endpoint',
-    expirationTime: 'expirationTime',
-    keys: {
-      p256dh: 'p256dh',
-      auth: 'auth'
+describe('Push', () => {
+  const subscriptionData = {
+    userId: 'blabl', subscription: {
+      endpoint: 'endpoint',
+      expirationTime: 'expirationTime',
+      keys: {
+        p256dh: 'p256dh',
+        auth: 'auth'
+      }
     }
   };
   beforeAll((done) => {
@@ -36,7 +38,7 @@ describe('Sync', () => {
   });
 
   it('should accept POST with full subscription data', (done) => {
-    pushHelper.savePushSubscription(subscription)
+    pushHelper.savePushSubscription(subscriptionData)
       .then(response => {
         expect(response.status).toBe(200);
         done();
