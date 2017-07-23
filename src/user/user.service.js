@@ -4,20 +4,22 @@ let collection = {};
 
 exports.init = (dbInstance) => {
   collection = dbInstance.collection('user');
+  collection.createIndex({userName: 1}, {unique: true});
+  collection.createIndex({mailAddress: 1}, {unique: true, partialFilterExpression: {mailAddress: {$type: "string"}}});
 };
 
 exports.addUser = (user) => {
   return new Promise((resolve, reject) => {
-      collection.insertOne(user, (err, result) => {
-        if (err) {
-          log.error('could not add user', err);
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
+    collection.insertOne(user, (err, result) => {
+      if (err) {
+        log.error('could not add user', err);
+        reject(err);
+      } else {
+        resolve(result);
+      }
     });
-    };
+  });
+};
 
 exports.deleteUser = (searchCond) => {
   return new Promise((resolve, reject) => {
@@ -58,10 +60,12 @@ function getSearchCondition(user) {
     return {_id: new ObjectID(user._id)};
   }
   const userName = user.userName ? new RegExp(user.userName, "i") : null;
-  return {$or: [
-    {mailAddress: user.mailAddress || 'NONE_GIVEN'},
-    {userName}
-  ]};
+  return {
+    $or: [
+      {mailAddress: user.mailAddress || 'NONE_GIVEN'},
+      {userName}
+    ]
+  };
 }
 
 function findUser(searchCond) {
