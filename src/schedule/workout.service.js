@@ -1,4 +1,5 @@
 const log = require('../logger/logger.instance').getLogger('WorkoutService');
+const ObjectID = require('mongodb').ObjectID;
 let workouts = {};
 
 exports.init = (dbInstance) => {
@@ -17,6 +18,26 @@ exports.getWorkouts = workoutIds => {
         reject(err);
       } else {
         resolve(result.toArray());
+      }
+    });
+  });
+};
+
+exports.addComment = (workoutId, comment) => {
+  return new Promise((resolve, reject) => {
+    workouts.updateOne({_id: new ObjectID(workoutId)}, {
+      $push: {
+        comments: {
+          $each: [comment],
+          $position: 0
+        }
+      }
+    }, (err, result) => {
+      if (err) {
+        log.error('Could not add comment', {workoutId, comment});
+        reject(err);
+      } else {
+        resolve(result);
       }
     });
   });

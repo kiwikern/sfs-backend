@@ -5,32 +5,30 @@ const workoutService = require('./workout.service');
 const changesService = require('./changes.service');
 const scheduleParser = require('./schedule.parser.js');
 const notificationSender = require('../push/push.sender');
+const commentSetter = require('./comment.setter');
+const auth = require('../user/auth.middlewear');
 const log = require('../logger/logger.instance').getLogger('ScheduleRouter');
 
-let schedule = [];
-let latestUpdateDate = '';
 let changes = [];
 
 exports.routes = () => router.routes();
 
 exports.init = (promise) => {
   return promise
-    .then(scheduleService.getLatestSchedule)
-    .then(ids => workoutService.getWorkouts(ids))
-    .then(json => json ? schedule = json : json)
-    .then(scheduleService.getLatestUpdateDate)
-    .then(date => latestUpdateDate = date)
     .then(changesService.getRecentChanges)
     .then(changes => loadChangesWorkouts(changes))
     .then(c => changes = c);
 };
 
 router.get('/', ctx => {
-  ctx.body = schedule;
+ return scheduleService.getLatestSchedule()
+    .then(ids => workoutService.getWorkouts(ids))
+    .then(schedule => ctx.body = schedule)
 });
 
 router.get('/latest-update-date', ctx => {
-  ctx.body = latestUpdateDate;
+  return scheduleService.getLatestUpdateDate
+    .then(latestUpdateDate => ctx.body = latestUpdateDate);
 });
 
 router.get('/changes', ctx => {
@@ -42,20 +40,19 @@ router.get('/reload', ctx => {
   ctx.body = 'reload done';
 });
 
+router.post('/comment', auth.getAuth(), ctx => commentSetter.addComment(ctx));
+
+router.get('/comment', ctx => commentGetter.getComments(ctx));
+
 /**
  * Reload schedule every day at 4 am.
  */
 cron.schedule('0 4 * * *', reload);
 
 function reload() {
-  log.info('reload startet');
+  log.info('reload started');
   scheduleParser.parseCourses()
     .then(hasChanged => hasChanged ? notificationSender.sendPush() : false)
-    .then(scheduleService.getLatestSchedule)
-    .then(ids => workoutService.getWorkouts(ids))
-    .then(json => json ? schedule = json : json)
-    .then(scheduleService.getLatestUpdateDate)
-    .then(date => latestUpdateDate = date)
     .then(changesService.getRecentChanges)
     .then(changes => loadChangesWorkouts(changes))
     .then(c => changes = c)
