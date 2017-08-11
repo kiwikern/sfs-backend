@@ -5,7 +5,7 @@ let collection = {};
 exports.init = (dbInstance) => {
   collection = dbInstance.collection('user');
   collection.createIndex({userName: 1}, {unique: true});
-  collection.createIndex({mailAddress: 1}, {unique: true, partialFilterExpression: {mailAddress: {$type: "string"}}});
+  // collection.createIndex({mailAddress: 1}, {unique: true, partialFilterExpression: {mailAddress: {$type: "string"}}});
 };
 
 exports.addUser = (user) => {
