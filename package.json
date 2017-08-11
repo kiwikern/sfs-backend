@@ -1,6 +1,6 @@
 {
   "name": "sfschedule",
-  "version": "3.7.0",
+  "version": "3.7.1",
   "description": "schedule for superfit classes",
   "main": "index.js",
   "scripts": {
