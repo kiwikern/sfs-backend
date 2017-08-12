@@ -50,7 +50,7 @@ config.calendars = [
 ];
 
 config.classMapping = {
-  'a lmi step': 'lmistep',
+  'a lmi step': 'almistep',
   'bbp': 'bbp',
   'bauch': 'bauch',
   'bauch beine po': 'bbp',
@@ -73,12 +73,11 @@ config.classMapping = {
   'faszientraining': 'faszientraining',
   'fatburner': 'fatburner',
   'fullbody workout': 'fullbodyworkout',
-  'fullbody workout': 'fullbodyworkout',
   'functional': 'functional',
   'grit plyo': 'gritplyo',
   'hiit': 'hiit',
   'jumping': 'jumpingfitness',
-  'lmi step': 'bodystep',
+  'lmi step': 'lmistep',
   'lmi step express': 'lmistepxp',
   'pilates': 'pilates',
   'po': 'po',
