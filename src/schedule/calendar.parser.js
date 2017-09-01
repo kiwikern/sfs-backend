@@ -112,7 +112,8 @@ function getDuration(event) {
 }
 
 function getType(event) {
-  if (isTeamTraining(event)) {
+  let name = event.summary.trim().toLowerCase();
+  if (isTeamTraining(name)) {
     return 'teamtraining';
   } else {
     return 'class';
@@ -121,7 +122,7 @@ function getType(event) {
 
 function getWorkoutId(event) {
   let name = event.summary.trim().toLowerCase();
-  if (isTeamTraining(event)) {
+  if (isTeamTraining(name)) {
     name = name.slice(13);
   }
   if (classMapping.hasOwnProperty(name)) {
@@ -132,8 +133,8 @@ function getWorkoutId(event) {
   }
 }
 
-function isTeamTraining(event) {
-  return event.summary.startsWith('TeamTraining') || event.summary.startsWith('TemaTraining');
+function isTeamTraining(name) {
+  return name.startsWith('teamtraining') || name.startsWith('tematraining');
 }
 
 function getWeekday(event) {
