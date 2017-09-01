@@ -39,14 +39,14 @@ function dropCollection(collection) {
   });
 }
 
-function insertWorkout() {
+exports.insertWorkout = (course = 'bauch', type = 'teamtraining') => {
   const workoutId = new ObjectId();
   return new Promise((resolve, reject) => {
     db.collection('workout').insertOne({
       "_id": workoutId,
-      "course": "bauch",
+      "course": course,
       "studio": "berlin-europa-center",
-      "type": "teamtraining",
+      "type": type,
       "day": "tuesday",
       "time": "10:30",
       "duration": 20
@@ -58,7 +58,11 @@ function insertWorkout() {
       }
     })
   });
-}
+};
+
+exports.findWorkout = workoutId => {
+  return db.collection('workout').findOne({_id: new ObjectId(workoutId)});
+};
 
 function insertSchedule(workoutId) {
   return new Promise((resolve, reject) => {
