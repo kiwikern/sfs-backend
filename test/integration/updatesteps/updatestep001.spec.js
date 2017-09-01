@@ -1,7 +1,7 @@
 const dbHelper = require('../db.helper');
 const us = require('../../../src/updatesteps/updatestep001');
 
-fdescribe('User registration and login', () => {
+describe('User registration and login', () => {
   beforeAll((done) => {
     dbHelper.init()
       .then(() => done());

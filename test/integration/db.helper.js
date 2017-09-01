@@ -39,7 +39,9 @@ function dropCollection(collection) {
   });
 }
 
-exports.insertWorkout = (course = 'bauch', type = 'teamtraining') => {
+exports.insertWorkout = insertWorkout;
+
+function insertWorkout(course = 'bauch', type = 'teamtraining') {
   const workoutId = new ObjectId();
   return new Promise((resolve, reject) => {
     db.collection('workout').insertOne({
