@@ -22,8 +22,8 @@ exports.resetPassword = ctx => {
       .then(password => userService.updateUser(userId, {password}))
       .then(() => userService.findUserByNameMailOrId({_id: userId}))
       .then(user => {
-        const token = tokenGenerator.generateToken(user, ctx);
-        ctx.response.body = {token, userName: user.userName, userId: user.userId};
+        const token = tokenGenerator.generateToken(user);
+        ctx.response.body = {token, userName: user.userName, userId: user._id};
         ctx.response.status = 200;
       })
       .catch(error => handleError(error, ctx));
