@@ -26,6 +26,9 @@ const classes = [
   "teamtraining cellulite killer"
 ];
 
+/**
+ * Run updatestep with: node -e "require('./src/updatesteps/updatestep001').run()"
+ */
 module.exports.run = () => {
   return new Promise((resolve, reject) => {
     MongoClient.connect(url, (err, db) => {
