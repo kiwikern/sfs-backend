@@ -82,3 +82,11 @@ function insertSchedule(workoutId) {
     })
   });
 }
+
+exports.getDatabase = () => db;
+
+exports.getUpdateStepNumber = () => {
+  return db.collection('properties')
+    .findOne({name: 'updateStepNumber'})
+    .then(prop => prop && prop.value ? prop.value : -1);
+};
