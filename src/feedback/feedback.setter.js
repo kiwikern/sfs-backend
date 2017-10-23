@@ -14,9 +14,13 @@ exports.saveFeedback = (ctx) => {
   const userId = ctx.request.body.userId;
   const userName = ctx.request.body.userName;
   const version = ctx.request.body.version;
-  feedbackMailSender.sendFeedbackMail({userId, userName, version, feedback});
   return feedbackService.addFeedback({userId, version, feedback})
-    .then(() => ctx.response.status = 200)
+    .then(insertionResult => {
+      feedback.feedbackId = insertionResult.insertedId;
+      feedbackMailSender.sendFeedbackMail({userId, userName, version, feedback});
+      return Promise.resolve();
+    })
+    .then(() => ctx.response.status = 204)
     .catch(error => {
       log.error('could not save feedback', error);
       ctx.response.status = 500;

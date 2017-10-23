@@ -14,7 +14,7 @@ exports.saveResponse = ctx => {
     isRead: response.userId !== 'sfs'
   };
   return feedbackService.addResponse(response.feedbackId, dbResponse)
-    .then(() => ctx.response.status = 200)
+    .then(() => ctx.response.status = 204)
     .catch(error => {
       log.error('could not save response', error);
       ctx.response.status = 500;
