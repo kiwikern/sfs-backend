@@ -71,6 +71,7 @@ config.classMapping = {
   'cellulite killer': 'cellulitekiller',
   'circuit': 'circuit',
   'cycle': 'cycle',
+  'cx worx': 'CXWORX',
   'faszientraining': 'faszientraining',
   'fatburner': 'fatburner',
   'fullbody workout': 'fullbodyworkout',
