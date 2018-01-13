@@ -31,9 +31,13 @@ config.calendars = [
     gym: 'berlin-mitte',
     id: 'u3434dv0sb5ug2s9vqmro9c668@group.calendar.google.com'
   },
+  // {
+  //   gym: 'berlin-neukoelln',
+  //   id: 'ee0beb217isugp00ibmm7vn26o@group.calendar.google.com'
+  // },
   {
-    gym: 'berlin-neukoelln',
-    id: 'kboda60qu7pjm4if0cqukm43jc@group.calendar.google.com'
+    gym: 'berlin-neukoelln-women',
+    id: 'ikpatplmef18mfqmag4fs5fi5c@group.calendar.google.com'
   },
   {
     gym: 'brandenburg-potsdam',
