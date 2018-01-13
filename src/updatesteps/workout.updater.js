@@ -1,6 +1,6 @@
 const classMapping = require('../config').classMapping;
 const ObjectId = require('mongodb').ObjectID;
-const log = require('../logger/logger.instance').getLogger(`WorkoutnameUpdater`);
+const log = require('../logger/logger.instance').getLogger(`WorkoutUpdater`);
 
 
 exports.updateClassNames = function (db, classes) {
