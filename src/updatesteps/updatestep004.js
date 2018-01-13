@@ -1,12 +1,12 @@
-const nameUpdater = require('workoutname.updater');
+const workoutUpdater = require('./workout.updater');
 
 /**
  * Added new workout type cx worx to workout mapping.
  */
 exports.run = db => {
   const classes = [
-    "cx worx",
+    "cellulite-killer",
   ];
-  return nameUpdater.updateClassNames(db, classes);
+  return workoutUpdater.updateClassNames(db, classes);
 };
 

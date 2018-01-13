@@ -1,7 +1,7 @@
 const dbHelper = require('../db.helper');
 const usRunner = require('../../../src/updatesteps/updatestep.runner');
 
-describe('UpdateStep003', () => {
+describe('UpdateStep004', () => {
   beforeAll((done) => {
     dbHelper.init()
       .then(() => done());
@@ -12,18 +12,18 @@ describe('UpdateStep003', () => {
       .then(() => done());
   });
 
-  it('should only change cx worx', done => {
-    let bodyPumpId, cxWorxId;
+  it('should only change cellulite kiler', done => {
+    let bodyPumpId, celluliteId;
     Promise.resolve()
       .then(() => dbHelper.insertWorkout('bodypump', 'class'))
       .then(id => bodyPumpId = id)
-      .then(() => dbHelper.insertWorkout('cx worx', 'class'))
-      .then(id => cxWorxId = id)
-      .then(() => usRunner.run(3))
+      .then(() => dbHelper.insertWorkout('cellulite-killer', 'class'))
+      .then(id => celluliteId = id)
+      .then(() => usRunner.run(4))
       .then(() => dbHelper.findWorkout(bodyPumpId))
       .then(workout => expect(workout.course).toBe('bodypump'))
-      .then(() => dbHelper.findWorkout(cxWorxId))
-      .then(workout => expect(workout.course).toBe('CXWORX'))
+      .then(() => dbHelper.findWorkout(celluliteId))
+      .then(workout => expect(workout.course).toBe('cellulitekiller'))
       .then(() => done());
   });
 
