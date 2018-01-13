@@ -43,10 +43,10 @@ config.calendars = [
     gym: 'brandenburg-potsdam',
     id: '429622cfco09phafrdmp92j6t8@group.calendar.google.com'
   },
-  {
-    gym: 'sachsen-dresden',
-    id: 'ti5re8ijjor338rbgskfokv6uk@group.calendar.google.com'
-  },
+  // {
+  //   gym: 'sachsen-dresden',
+  //   id: 'ti5re8ijjor338rbgskfokv6uk@group.calendar.google.com'
+  // },
   {
     gym: 'berlin-steglitz-women',
     id: 'gq52lebbgmucdmfft3li8s5230@group.calendar.google.com'
