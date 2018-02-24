@@ -7,7 +7,7 @@ exports.saveSubscription = (ctx) => {
     const subscription = createSubscription(body.subscription);
     return pushService.addSubscription({subscription, userId: body.userId})
       .then(() => sendSuccessMessage(ctx))
-      .catch((err) => sendErrorMessage(ctx));
+      .catch((err) => sendErrorMessage(err, ctx));
   }
 };
 
@@ -38,15 +38,15 @@ function sendSuccessMessage(ctx) {
   ctx.status = 200;
 }
 
-function sendErrorMessage(ctx) {
-  log.warn('could not save subscription', {body: ctx.request.body});
-  const error = {
+function sendErrorMessage(error, ctx) {
+  log.error('could not save subscription', {error, body: ctx.request.body});
+  const errorResponse = {
     error: {
       id: 'unable-to-save-subscription',
       message: 'The subscription was received but could not be stored.'
     }
   };
-  ctx.body = JSON.stringify(error);
+  ctx.body = JSON.stringify(errorResponse);
   ctx.status = 500;
 
 }
