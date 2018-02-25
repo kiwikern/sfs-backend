@@ -17,7 +17,11 @@ exports.login = (ctx) => {
     .then(user => user ? user : Promise.reject(new Error('user_not_found')))
     .then(user => checkPassword(user, userBody.password))
     .then(user => {
-      const token = tokenGenerator.generateToken(user, ctx);
+      let subject;
+      if (user.role) {
+        subject = {role: user.role};
+      }
+      const token = tokenGenerator.generateToken(user, subject);
       ctx.response.body = {token, userName: user.userName, userId: user._id};
       ctx.response.status = 200;
     })
