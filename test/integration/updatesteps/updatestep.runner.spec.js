@@ -25,7 +25,7 @@ describe('UpdateStepRunner', () => {
       .then(() => dbHelper.findWorkout(poId))
       .then(workout => expect(workout.course).toBe('po'))
       .then(() => dbHelper.getUpdateStepNumber())
-      .then(stepNumber => expect(stepNumber).toBe(4))
+      .then(stepNumber => expect(stepNumber).toBe(5))
       .then(() => done())
       .catch(() => done());
   });

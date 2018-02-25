@@ -88,7 +88,7 @@ describe(`UserLogin`, () => {
           }
         }
       },
-      tokenGenerator: {generateToken: (_, ctx) => ctx.response.status = 200},
+      tokenGenerator: {generateToken: () => 'token'},
       bcrypt: {compare: (pw, _, fn) => fn('', pw === 'correct')}
     };
   }
