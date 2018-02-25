@@ -11,6 +11,7 @@ exports.saveFeedback = (ctx) => {
   const feedback = ctx.request.body.feedback;
   feedback.date = new Date();
   feedback.responses = [];
+  feedback.isRead = false;
   const userId = ctx.request.body.userId;
   const userName = ctx.request.body.userName;
   const version = ctx.request.body.version;

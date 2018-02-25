@@ -10,9 +10,9 @@ exports.saveResponse = ctx => {
   const response = ctx.request.body;
   const dbResponse = {
     text: response.text,
-    userId: response.userId,
+    userId: getUserId(ctx),
     date: new Date(),
-    isRead: response.userId !== 'sfs'
+    isRead: false
   };
   log.info('new feedback response', response);
   // TODO: do not send if user === sfs
@@ -49,4 +49,12 @@ function isValidRequest(ctx) {
 
   }
   return true;
+}
+
+function getUserId(ctx) {
+  if (ctx.state && ctx.state.user && ctx.state.user.subject && ctx.state.user.subject.role === 'ADMIN') {
+    return 'sfs'
+  } else {
+    return ctx.request.body.userId;
+  }
 }

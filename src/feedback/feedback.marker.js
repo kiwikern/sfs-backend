@@ -6,7 +6,10 @@ exports.markRead = ctx => {
     log.warn('got invalid request', ctx.request.body);
     return false;
   }
-  return feedbackService.markRead(ctx.request.body.feedbackId)
+
+  const isAdmin = ctx.state && ctx.state.user && ctx.state.user.subject && ctx.state.user.subject.role === 'ADMIN';
+
+  return feedbackService.markRead(ctx.request.body.feedbackId, isAdmin)
     .then(() => ctx.response.status = 200)
     .catch(error => {
       log.error('could not mark read', error);

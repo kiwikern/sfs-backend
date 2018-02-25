@@ -58,12 +58,28 @@ exports.findFeedbackList = userId => {
   })
 };
 
-exports.markRead = feedbackId => {
+exports.findAllFeedback = () => {
+  return new Promise((resolve, reject) => {
+    collection.find({}, {sort: {"feedback.date": -1}}, (err, result) => {
+      if (err) {
+        log.error('could not find feedback', err);
+        reject(err);
+      } else {
+        resolve(result.toArray());
+      }
+    });
+  })
+};
+
+exports.markRead = (feedbackId, isAdmin) => {
+  if (isAdmin) {
+    markFeedbackRead(feedbackId);
+  }
   return findFeedbackById(feedbackId)
     .then(result => {
       if (result && result.feedback && Array.isArray(result.feedback.responses)) {
         const responses = result.feedback.responses.map(r => {
-          if (r) {
+          if (r && (r.userId === 'sfs') !== isAdmin) {
             r.isRead = true;
           }
           return r;
@@ -97,6 +113,19 @@ function updateResponses(feedbackId, responses) {
         reject(err);
       } else {
         resolve(result);
+      }
+    });
+  });
+}
+
+function markFeedbackRead(feedbackId) {
+  return new Promise((resolve, reject) => {
+    collection.updateOne({_id: new ObjectID(feedbackId)}, {$set: {'feedback.isRead': true}}, (err, result) => {
+      if (err) {
+        log.error('could not update responses', err);
+        return reject(err);
+      } else {
+        return resolve(result);
       }
     });
   });
