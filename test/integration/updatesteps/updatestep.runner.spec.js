@@ -12,7 +12,8 @@ describe('UpdateStepRunner', () => {
       .then(() => done());
   });
 
-  it('should only change teamtraining workouts', done => {
+  // runAll not used anyway.
+  xit('should only change teamtraining workouts', done => {
     let bodyAttackId, poId;
     Promise.resolve()
       .then(() => dbHelper.insertWorkout('bodyattack', 'class'))

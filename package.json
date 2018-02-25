@@ -6,9 +6,9 @@
   "scripts": {
     "jasmine": "jasmine",
     "start": "nodemon src/index.js",
-    "pretest": "move src\\secrets.js src\\_secrets.js && copy travis.secrets.js src\\secrets.js",
+    "pretest": "mv src/secrets.js src/_secrets.js && cp travis.secrets.js src/secrets.js",
     "test": "npm run test:ci || echo true",
-    "posttest": "del src\\secrets.js && move src\\_secrets.js src\\secrets.js",
+    "posttest": "rm src/secrets.js && mv src/_secrets.js src/secrets.js",
     "int:test": "npm run jasmine -- --config=test/integration/integration.jasmine.json",
     "int:watch": "nodemon --exec npm run int:test",
     "unit:test": "npm run jasmine -- --config=test/unit/unit.jasmine.json",
