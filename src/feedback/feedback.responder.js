@@ -1,4 +1,5 @@
 let feedbackService = require('./feedback.service');
+let feedbackMailSender = require('./feedback.mailsender');
 const log = require('../logger/logger.instance').getLogger('FeedbackResponder');
 
 exports.saveResponse = ctx => {
@@ -13,6 +14,9 @@ exports.saveResponse = ctx => {
     date: new Date(),
     isRead: response.userId !== 'sfs'
   };
+  log.info('new feedback response', response);
+  // TODO: do not send if user === sfs
+  feedbackMailSender.sendFeedbackMail(response);
   return feedbackService.addResponse(response.feedbackId, dbResponse)
     .then(() => ctx.response.status = 204)
     .catch(error => {
