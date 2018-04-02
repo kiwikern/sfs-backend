@@ -86,7 +86,7 @@ function runUpdateStep(stepNumber) {
   const stepString = padStart(('' + stepNumber), 3, '0');
   const paddedStep = stepString.substr(stepString.length - 3);
   const updateStep = require(`./updatestep${paddedStep}`);
-  updateStep.run(db);
+  return updateStep.run(db);
 }
 
 function hasNotAlreadyBeenExecuted(lastExecutedStep, stepNumber) {

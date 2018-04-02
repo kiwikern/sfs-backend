@@ -12,7 +12,7 @@ describe('UpdateStep002', () => {
       .then(() => done());
   });
 
-  it('should only change bodyattack 45 and twerkout', done => {
+  it('should only change bodypump 45 and twerkout', done => {
     let bodyPumpId, bodyPump45Id, twerkOutId;
     Promise.resolve()
       .then(() => dbHelper.insertWorkout('bodypump', 'class'))
