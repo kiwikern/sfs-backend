@@ -6,11 +6,14 @@ exports.getFeedback = (ctx) => {
     .then(feedback => {
       if (feedback) {
         ctx.response.status = 200;
-        ctx.response.body = {feedbackList: feedback.map(f => {
-          const fb = f.feedback;
-          fb.id = f._id;
-          return fb;
-        })};
+        ctx.response.body = {
+          feedbackList: feedback.map(f => {
+            const fb = f.feedback;
+            fb.id = f._id;
+            fb.userId = f.userId;
+            return fb;
+          })
+        };
       } else {
         ctx.response.status = 200;
         ctx.response.body = {feedbackList: []};
@@ -33,11 +36,14 @@ exports.getAllFeedback = (ctx) => {
     .then(feedback => {
       if (feedback) {
         ctx.response.status = 200;
-        ctx.response.body = {feedbackList: feedback.map(f => {
-          const fb = f.feedback;
-          fb.id = f._id;
-          return fb;
-        })};
+        ctx.response.body = {
+          feedbackList: feedback.map(f => {
+            const fb = f.feedback;
+            fb.id = f._id;
+            fb.userId = f.userId;
+            return fb;
+          })
+        };
       } else {
         ctx.response.status = 200;
         ctx.response.body = {feedbackList: []};
