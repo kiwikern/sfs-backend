@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "jasmine": "jasmine",
+    "mongo": "mongod",
     "start": "nodemon src/index.js",
     "pretest": "move .\\src\\secrets.js .\\src\\_secrets.js && copy .\\travis.secrets.js .\\src\\secrets.js",
     "test": "npm run test:ci || echo true",
