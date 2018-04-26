@@ -53,7 +53,9 @@ config.calendars = [
   }
 ];
 
+// noinspection NonAsciiCharacters noinspection JSNonASCIINames
 config.classMapping = {
+  '4d pro ® bungee fitness': 'Bungee Fitness',
   'a lmi step': 'almistep',
   'bbp': 'bbp',
   'bauch': 'bauch',
