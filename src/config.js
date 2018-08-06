@@ -58,6 +58,7 @@ config.classMapping = {
   '4d pro ® bungee fitness': 'Bungee Fitness',
   'a lmi step': 'almistep',
   'bbp': 'bbp',
+  'barre': 'Barre',
   'bauch': 'bauch',
   'bauch beine po': 'bbp',
   'bauch express': 'bauchxp',
