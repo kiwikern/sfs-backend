@@ -77,10 +77,8 @@ function getWorkoutsForStudio(options, gym) {
         log.warn('No events found for ' + gym);
         return resolve([]);
       } else {
-        const workouts = [];
-        for (const event of events) {
-          workouts.push(getWorkout(event, gym));
-        }
+        const workouts = events.filter(event => isValidEvent(event, gym))
+          .map(event => getWorkout(event, gym));
         return resolve(workouts);
       }
     });
@@ -109,6 +107,7 @@ function getDuration(event) {
   const diff = end.diff(start);
   const duration = moment.duration(diff).asMinutes();
   return Math.floor(duration);
+
 }
 
 function getType(event) {
@@ -134,9 +133,19 @@ function getWorkoutId(event) {
 }
 
 function isTeamTraining(name) {
-  return name.startsWith('teamtraining') || name.startsWith('tematraining');
+  return name.startsWith('teamtraining') || name.startsWith('tematraining') || name.startsWith('teamtrainign');
 }
 
 function getWeekday(event) {
   return moment(event.start.dateTime).format('dddd').toLowerCase();
+}
+
+function isValidEvent(event, gym) {
+  if (event.status === 'cancelled') {
+    return false;
+  }
+  if (!event.summary) {
+    log.warn('Skipping event without name:', {event, gym});
+  }
+  return !!event.summary;
 }
