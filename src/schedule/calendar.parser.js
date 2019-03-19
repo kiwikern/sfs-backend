@@ -1,13 +1,13 @@
 const moment = require('moment');
-const google = require('googleapis');
+const {google} = require('googleapis');
 const calendar = google.calendar('v3');
 const credentials = require('../secrets.js').googleCredentials;
 const classMapping = require('../config').classMapping;
 const calendars = require('../config').calendars;
 const log = require('../logger/logger.instance').getLogger('CalendarParser', 'debug');
 
-exports.getWorkouts = () => {
-  const jwtClient = getGoogleAuth();
+exports.getWorkouts = async () => {
+  const jwtClient = await getGoogleAuth();
   let workouts = [];
   const promises = [];
   for (let i = 0; i < 7; i++) {
@@ -37,7 +37,8 @@ function getWorkoutsForDay(jwtClient, timeMin, timeMax) {
         auth: jwtClient,
         calendarId: cal.id,
         timeMin,
-        timeMax
+        timeMax,
+        singleEvents: true
       };
       const promise = getWorkoutsForStudio(options, cal.gym);
       promise.then(studioWorkouts => workouts = workouts.concat(studioWorkouts))
@@ -50,18 +51,14 @@ function getWorkoutsForDay(jwtClient, timeMin, timeMax) {
   });
 }
 
-function getGoogleAuth() {
+async function getGoogleAuth() {
   const jwtClient = new google.auth.JWT(
     credentials.client_email,
     null,
     credentials.private_key,
     ['https://www.googleapis.com/auth/calendar']);
 
-  jwtClient.authorize(function (err, tokens) {
-    if (err) {
-      log.error('calendarp', '', err);
-    }
-  });
+  await jwtClient.authorize();
   return jwtClient;
 }
 
@@ -72,7 +69,7 @@ function getWorkoutsForStudio(options, gym) {
         log.error('could not parse calendar', {gym, err});
         return reject(err);
       }
-      const events = response.items;
+      const events = response.data.items;
       if (events.length === 0) {
         log.warn('No events found for ' + gym);
         return resolve([]);
