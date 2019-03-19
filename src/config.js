@@ -75,6 +75,7 @@ config.classMapping = {
   'bodyvive 3.1': 'bodyvive',
   'bodyvive 3.1 express': 'bodyvivexp',
   'bodyvive express': 'bodyvivexp',
+  'booty express': 'booty express',
   'cellulite killer': 'cellulitekiller',
   'cellulite-killer': 'cellulitekiller',
   'circuit': 'circuit',
