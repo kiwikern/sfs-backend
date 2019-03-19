@@ -17,7 +17,6 @@ exports.init = () => {
         log.error('could not connect to database', err);
         reject();
       } else {
-        log.info('init finished');
         pushService.init(db);
         scheduleService.init(db);
         workoutService.init(db);
@@ -28,5 +27,5 @@ exports.init = () => {
         resolve();
       }
     });
-  });
+  }).then(() => log.info('init finished'));
 };

@@ -9,7 +9,6 @@ exports.init = () => {
     vapidKeys.publicKey,
     vapidKeys.privateKey
   );
-  log.info('init finished');
 };
 
 exports.sendPush = () => {
